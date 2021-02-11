@@ -5,9 +5,9 @@ from app.common import scrape_documents
 
 def main():
     usage = "%prog\n" \
-            "Scrape written messages from the American Presidency Project"
+            "Scrape miscellaneous remarks from the American Presidency Project"
     parser = OptionParser(usage=usage)
-    parser.add_option('--outdir', type=str, default='data/app/written_messages/',
+    parser.add_option('--outdir', type=str, default='data/app/misc_remarks/',
                       help='Output directory): default=%default')
     parser.add_option('--sleep', type=int, default=2,
                       help='Seconds to sleep after downloading a page: default=%default')
@@ -24,7 +24,7 @@ def main():
     sleep = options.sleep
 
     domain = 'https://www.presidency.ucsb.edu'
-    initial_target = '/documents/app-categories/presidential/written-messages'
+    initial_target = '/documents/app-categories/presidential/miscellaneous-remarks'
 
     scrape_documents(initial_target, outdir, overwrite_index_pages=overwrite, overwrite_all=overwrite_all, sleep=sleep, domain=domain)
 

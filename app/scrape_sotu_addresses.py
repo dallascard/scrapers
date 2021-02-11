@@ -5,7 +5,7 @@ from app.common import scrape_documents
 
 def main():
     usage = "%prog\n" \
-            "Scrape farewell addresses from the American Presidency Project"
+            "Scrape state of the union addesses (spoken) from the American Presidency Project"
     parser = OptionParser(usage=usage)
     parser.add_option('--outdir', type=str, default='data/app/sotu_addresses/',
                       help='Output directory): default=%default')
