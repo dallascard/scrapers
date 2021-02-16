@@ -6,7 +6,7 @@ from collections import defaultdict, Counter
 
 
 def main():
-    usage = "%prog scrapers_dir"
+    usage = "%prog scrapers_dir outfile.jsonlist"
     parser = OptionParser(usage=usage)
     #parser.add_option('--issue', type=str, default='immigration',
     #                  help='Issue: default=%default')
@@ -16,11 +16,11 @@ def main():
     (options, args) = parser.parse_args()
 
     scrapers_dir = args[0]
+    outfile = args[1]
 
     files = sorted(glob(os.path.join(scrapers_dir, 'data', 'app', '*', 'all.jsonlist')))
 
-    url_counter = Counter()
-    outlines = defaultdict(list)
+    documents = defaultdict(list)
     for infile in files:
         parts = infile.split('/')
         category = parts[-2]
@@ -29,37 +29,32 @@ def main():
             lines = f.readlines()
         lines = [json.loads(line) for line in lines]
         for line in lines:
-            line['category'] = category
             url = line['url']
-            outlines[url].append(line)
+            if url in documents:
+                assert documents[url]['title'] == line['title']
+                assert documents[url]['date'] == line['date']
+                assert documents[url]['person'] == line['person']
+                for p_i, para in enumerate(line['text']):
+                    assert para == documents[url]['text'][p_i]
+                documents[url]['categories'].add(category)
+            else:
+                line['categories'] = {category}
+                documents[url] = line
 
-    category_groups = Counter()
-    length_counter = Counter()
-    for url, lines in outlines.items():
-        length_counter[len(lines)] += 1
-        if len(lines) == 2:
-            try:
-                assert lines[0]['title'] == lines[1]['title']
-                assert lines[0]['date'] == lines[1]['date']
-                for p_i, para in enumerate(lines[0]['text']):
-                    assert lines[0]['text'][p_i] == lines[1]['text'][p_i]
+    category_counter = Counter()
+    category_group_counter = Counter()
+    print(len(documents))
+    with open(outfile, 'w') as f:
+        for url, line in documents.items():
+            category_counter.update(line['categories'])
+            category_group_counter[tuple(sorted(line['categories']))] += 1
+            f.write(json.dumps(line) + '\n')
 
-            except AssertionError as e:
-                print(lines[0])
-                print(lines[1])
-                raise e
-            #assert lines[0]['text'] == lines[1]['test']
+    for category, count in category_counter.most_common():
+        print(category, count)
 
-        if len(lines) > 1:
-            categories = tuple(sorted([line['category'] for line in lines]))
-            category_groups[categories] += 1
-
-    for length, count in length_counter.most_common():
-        print(length, count)
-
-    for group, count in category_groups.most_common():
+    for group, count in category_group_counter.most_common():
         print(group, count)
-
 
 if __name__ == '__main__':
     main()
