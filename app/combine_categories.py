@@ -46,8 +46,11 @@ def main():
     print(len(documents))
     with open(outfile, 'w') as f:
         for url, line in documents.items():
-            category_counter.update(line['categories'])
-            category_group_counter[tuple(sorted(line['categories']))] += 1
+            # convert set to list for serialization
+            categories = sorted(line['categories'])
+            category_counter.update(categories)
+            category_group_counter[tuple(categories)] += 1
+            line['categories'] = categories
             f.write(json.dumps(line) + '\n')
 
     for category, count in category_counter.most_common():
