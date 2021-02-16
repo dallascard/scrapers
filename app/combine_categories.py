@@ -20,7 +20,7 @@ def main():
     files = sorted(glob(os.path.join(scrapers_dir, 'data', 'app', '*', 'all.jsonlist')))
 
     url_counter = Counter()
-    outlines = []
+    outlines = defaultdict(list)
     for infile in files:
         parts = infile.split('/')
         category = parts[-2]
@@ -30,10 +30,22 @@ def main():
         lines = [json.loads(line) for line in lines]
         for line in lines:
             line['category'] = category
-            url_counter[line['url']] += 1
-        outlines.extend(lines)
+            url = line['url']
+            outlines[url].append(line)
 
-    print(len(outlines), len(url_counter))
+    category_groups = Counter()
+    length_counter = Counter()
+    for url, lines in outlines.items():
+        length_counter[len(lines)] += 1
+        if len(lines) > 1:
+            categories = tuple(sorted([line['category'] for line in lines]))
+            category_groups[categories] += 1
+
+    for length, count in length_counter.most_common():
+        print(length, count)
+
+    for group, count in category_groups.most_common():
+        print(group, count)
 
 
 if __name__ == '__main__':
