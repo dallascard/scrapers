@@ -37,6 +37,16 @@ def main():
     length_counter = Counter()
     for url, lines in outlines.items():
         length_counter[len(lines)] += 1
+        if len(lines) == 2:
+            try:
+                assert lines[0]['title'] == lines[1]['title']
+                assert lines[0]['date'] == lines[1]['date']
+            except AssertionError as e:
+                print(lines[0])
+                print(lines[1])
+                raise e
+            #assert lines[0]['text'] == lines[1]['test']
+
         if len(lines) > 1:
             categories = tuple(sorted([line['category'] for line in lines]))
             category_groups[categories] += 1
