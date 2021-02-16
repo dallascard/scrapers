@@ -24,6 +24,7 @@ def main():
     for infile in files:
         parts = infile.split('/')
         category = parts[-2]
+        print(category)
         with open(infile) as f:
             lines = f.readlines()
         lines = [json.loads(line) for line in lines]
