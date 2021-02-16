@@ -41,6 +41,9 @@ def main():
             try:
                 assert lines[0]['title'] == lines[1]['title']
                 assert lines[0]['date'] == lines[1]['date']
+                for p_i, para in lines[0]['text']:
+                    assert lines[0]['text'][p_i] == lines[1]['text'][p_i]
+
             except AssertionError as e:
                 print(lines[0])
                 print(lines[1])
