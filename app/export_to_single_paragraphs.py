@@ -3,6 +3,7 @@ import json
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
+from tqdm import tqdm
 
 def main():
     usage = "%prog infile.jsonlist outfile.jsonlist"
@@ -19,11 +20,11 @@ def main():
 
     with open(infile) as f:
         lines = f.readlines()
-    lines = [json.loads(line) for line in lines]
     print("Loaded {:d} documents".format(len(lines)))
 
     outlines = []
-    for line in lines:
+    for line in tqdm(lines):
+        line = json.loads(line)
         url = line['url']
         paragraphs = line['text']
         for p_i, p in enumerate(paragraphs):
