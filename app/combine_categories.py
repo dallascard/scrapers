@@ -50,7 +50,8 @@ def main():
             # convert set to list for serialization
             categories = sorted(line['categories'])
             category_counter.update(categories)
-            category_group_counter[tuple(categories)] += 1
+            if len(categories) > 1:
+                category_group_counter[tuple(categories)] += 1
             line['categories'] = categories
             person_counter[line['person']] += 1
             f.write(json.dumps(line) + '\n')
