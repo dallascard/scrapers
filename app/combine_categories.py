@@ -43,6 +43,7 @@ def main():
 
     category_counter = Counter()
     category_group_counter = Counter()
+    person_counter = Counter()
     print(len(documents))
     with open(outfile, 'w') as f:
         for url, line in documents.items():
@@ -51,6 +52,7 @@ def main():
             category_counter.update(categories)
             category_group_counter[tuple(categories)] += 1
             line['categories'] = categories
+            person_counter[line['person']] += 1
             f.write(json.dumps(line) + '\n')
 
     for category, count in category_counter.most_common():
@@ -58,6 +60,10 @@ def main():
 
     for group, count in category_group_counter.most_common():
         print(group, count)
+
+    for person, count in person_counter.most_common():
+        print(person, count)
+
 
 if __name__ == '__main__':
     main()
