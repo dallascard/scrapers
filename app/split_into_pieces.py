@@ -18,12 +18,14 @@ def main():
 
     n_pieces = options.pieces
 
+    print("Loading file")
     with open(infile) as f:
         lines = f.readlines()
 
     size = len(lines) // n_pieces
 
     for p in range(n_pieces):
+        print(p)
         if p == n_pieces-1:
             outlines = lines[p * size:]
         else:
