@@ -30,7 +30,7 @@ def main():
             outlines = lines[p * size:]
         else:
             outlines = lines[p * size: (p+1) * size]
-        outfile = infile[-9:] + '_' + str(p) + '.jsonlist'
+        outfile = infile[:-9] + '_' + str(p) + '.jsonlist'
         print(outfile)
         with open(outfile, 'w') as f:
             for line in outlines:
