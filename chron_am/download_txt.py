@@ -13,8 +13,10 @@ def main():
     parser = OptionParser(usage=usage)
     parser.add_option('--start-date', type=str, default='2021015',
                       help='Start downloading from this date: default=%default')
-    parser.add_option('--max-batches', type=int, default=2,
-                      help='Limit the number of files to download: default=%default')
+    parser.add_option('--first', type=int, default=0,
+                      help='First batch: default=%default')
+    parser.add_option('--last', type=int, default=0,
+                      help='Last batch: default=%default')
     parser.add_option('--overwrite', action="store_true", default=False,
                       help='Overwrite: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
@@ -27,7 +29,8 @@ def main():
     outdir = args[0]
 
     start_date = options.start_date
-    max_batches = options.max_batches
+    first = options.first
+    last = options.last
     overwrite = options.overwrite
     overwrite_index = options.overwrite_index
     log_file = options.log_file
@@ -57,8 +60,7 @@ def main():
     batches = data['batches']
     print(len(batches))
 
-    count = 0
-    for batch in tqdm(batches[:1]):
+    for batch in tqdm(batches[first:last]):
         batch_name = batch['name']
         batch_url = batch['url']
         page_count = batch['page_count']
@@ -136,10 +138,6 @@ def main():
                         if overwrite or not os.path.exists(outfile):
                             print("Downloading", text_url, "to", outfile)
                             download(text_url, outfile)
-
-        count += 1
-        if count >= max_batches:
-            break
 
 
 if __name__ == '__main__':
