@@ -42,15 +42,10 @@ def main():
 
     index_file = os.path.join(outdir, 'index.json')
     if overwrite_index or not os.path.exists(index_file):
-        data = get(target, html_only=False)
-        if data is None:
-            raise RuntimeError("Index file not downloaded")
-        else:
-            with open(index_file, 'wb') as f:
-                json.dump(data, f)
-    else:
-        with open(index_file, 'rb') as f:
-            data = json.load(f)
+        download(target, index_file)
+
+    with open(index_file, 'r') as f:
+        data = json.load(f)
 
     items = data['ocr']
 
