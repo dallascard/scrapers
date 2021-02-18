@@ -46,10 +46,10 @@ def main():
         if data is None:
             raise RuntimeError("Index file not downloaded")
         else:
-            with open(index_file, 'w') as f:
+            with open(index_file, 'wb') as f:
                 json.dump(data, f)
     else:
-        with open(index_file) as f:
+        with open(index_file, 'rb') as f:
             data = json.load(f)
 
     items = data['ocr']
