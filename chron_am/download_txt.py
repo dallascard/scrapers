@@ -19,6 +19,8 @@ def main():
                       help='Overwrite: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
+    parser.add_option('--log-file', type=str, default='errors.log',
+                      help='Log file: default=%default')
 
     (options, args) = parser.parse_args()
 
@@ -28,6 +30,10 @@ def main():
     max_batches = options.max_batches
     overwrite = options.overwrite
     overwrite_index = options.overwrite_index
+    log_file = options.log_file
+
+    with open(log_file, 'w') as f:
+        f.write('')
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -101,6 +107,9 @@ def main():
 
                 if not os.path.exists(outfile):
                     print(outfile, "not found")
+                    with open(log_file, 'a') as f:
+                        f.write(outfile + 'not found (from' + issue_url + ').\n')
+
                 else:
                     with open(outfile, 'r') as f:
                         issue = json.load(f)
