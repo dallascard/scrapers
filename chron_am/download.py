@@ -57,11 +57,12 @@ def main():
         year = int(timestamp[:4])
         month = int(timestamp[5:7])
         day = int(timestamp[8:10])
+        size = item['size']
         date = dt.date(year=year, month=month, day=day)
         if date >= start_date:
             outfile = os.path.join(outdir, filename)
             if overwrite or not os.path.exists(outfile):
-                print("Downloading", url, "to", outfile)
+                print("Downloading", url, "to", outfile, '(size=', str(size) + ')')
                 download(url, outfile, binary=True, stream=True)
                 count += 1
             else:
