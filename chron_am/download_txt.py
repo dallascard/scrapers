@@ -99,31 +99,34 @@ def main():
                     print("Downloading", issue_url, "to", outfile, issue_date)
                     download(issue_url, outfile)
 
-                with open(outfile, 'r') as f:
-                    issue = json.load(f)
-
-                pages = issue['pages']
-                pages_dir = os.path.join(issue_dir, edition + '_pages')
-                if not os.path.exists(pages_dir):
-                    os.makedirs(pages_dir)
-                for page in pages:
-                    page_url = page['url']
-                    page_parts = page_url.split('/')
-                    outfile = os.path.join(pages_dir, page_parts[-1])
-                    if overwrite or not os.path.exists(outfile):
-                        print("Downloading", page_url, "to", outfile)
-                        download(page_url, outfile)
-
+                if not os.path.exists(outfile):
+                    print(outfile, "not found")
+                else:
                     with open(outfile, 'r') as f:
-                        page = json.load(f)
+                        issue = json.load(f)
 
-                    # drop .json extension
-                    seq_name = '.'.join(page_parts[-1].split('.')[:-1])
-                    text_url = page['text']
-                    outfile = os.path.join(pages_dir, seq_name + '.txt')
-                    if overwrite or not os.path.exists(outfile):
-                        print("Downloading", text_url, "to", outfile)
-                        download(text_url, outfile)
+                    pages = issue['pages']
+                    pages_dir = os.path.join(issue_dir, edition + '_pages')
+                    if not os.path.exists(pages_dir):
+                        os.makedirs(pages_dir)
+                    for page in pages:
+                        page_url = page['url']
+                        page_parts = page_url.split('/')
+                        outfile = os.path.join(pages_dir, page_parts[-1])
+                        if overwrite or not os.path.exists(outfile):
+                            print("Downloading", page_url, "to", outfile)
+                            download(page_url, outfile)
+
+                        with open(outfile, 'r') as f:
+                            page = json.load(f)
+
+                        # drop .json extension
+                        seq_name = '.'.join(page_parts[-1].split('.')[:-1])
+                        text_url = page['text']
+                        outfile = os.path.join(pages_dir, seq_name + '.txt')
+                        if overwrite or not os.path.exists(outfile):
+                            print("Downloading", text_url, "to", outfile)
+                            download(text_url, outfile)
 
         count += 1
         if count >= max_batches:
