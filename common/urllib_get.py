@@ -1,7 +1,6 @@
 from urllib.request import urlopen
 from contextlib import closing
 
-
 # Sometimes urllib works better than requests
 
 
