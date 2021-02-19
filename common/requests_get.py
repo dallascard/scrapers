@@ -1,3 +1,4 @@
+import time
 from contextlib import closing
 
 import requests
@@ -21,7 +22,7 @@ def get(url, html_only=True):
         return None
 
 
-def download(url, outfile, binary=True, stream=True):
+def download(url, outfile, binary=True, stream=True, retry=True):
     if binary:
         mode = 'wb'
     else:
@@ -38,6 +39,10 @@ def download(url, outfile, binary=True, stream=True):
             else:
                 print(response.status_code, response.headers)
                 return None
+        if response.status_code == 503 and retry:
+            # account for system being overloaded by adding a short delay
+            time.sleep(2)
+            return download(url, outfile, binary, stream, retry=False)
     except RequestException as e:
         print('Error during requests to {0} : {1}'.format(url, str(e)))
         return None

@@ -11,8 +11,8 @@ from common.requests_get import download, get
 def main():
     usage = "%prog outdir"
     parser = OptionParser(usage=usage)
-    parser.add_option('--start-date', type=str, default='2021015',
-                      help='Start downloading from this date: default=%default')
+    parser.add_option('--start-date', type=str, default='19000101',
+                      help='Only download batches created after this date: default=%default')
     parser.add_option('--first', type=int, default=0,
                       help='First batch: default=%default')
     parser.add_option('--last', type=int, default=0,
