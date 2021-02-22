@@ -24,6 +24,7 @@ def main():
     for infile in files:
         parts = os.path.split(infile)
         filename = parts[1]
+        outlines.append('echo ' + filename + '\n')
         outlines.append('sha1sum ' + filename + ' > ' + filename + '.sha1\n')
 
     with open(os.path.join(indir, 'compute_checksums.sh'), 'w') as f:
