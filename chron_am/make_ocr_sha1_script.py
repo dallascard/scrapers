@@ -22,7 +22,7 @@ def main():
 
     files = sorted(glob(os.path.join(indir, '*.bz2')))
     for infile in files:
-        parts = infile.split()
+        parts = os.path.split(infile)
         filename = parts[1]
         outlines.append('sha1sum ' + filename + ' > ' + filename + '.sha1\n')
 
