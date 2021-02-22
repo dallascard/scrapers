@@ -26,7 +26,7 @@ def main():
         filename = parts[1]
         outlines.append('sha1sum ' + filename + ' > ' + filename + '.sha1\n')
 
-    with open(indir, 'compute_checksums.sh') as f:
+    with open(os.path.join(indir, 'compute_checksums.sh'), 'w') as f:
         f.writelines(outlines)
 
 
