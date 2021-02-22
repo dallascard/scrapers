@@ -44,7 +44,7 @@ def main():
         basedir, filename = os.path.split(infile)
         if sha1 == sha1s[filename]:
             match = True
-        print(match, infile, sha1, sha1s[infile])
+        print(match, infile, sha1, sha1s[filename])
 
 
 if __name__ == '__main__':
