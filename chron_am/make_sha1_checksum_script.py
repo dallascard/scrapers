@@ -4,7 +4,7 @@ from glob import glob
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
-# Make a bash script to untar only the .txt files from downloaded tar.bz2 files
+# Make a script to compute the sha1 checksums for downloaded .tar.bz2 files
 
 def main():
     usage = "%prog basedir"
@@ -24,9 +24,9 @@ def main():
     for infile in files:
         parts = infile.split()
         filename = parts[1]
-        outlines.append('tar -xvf ' + filename + ' --wildcards "*.txt"\n')
+        outlines.append('sha1sum ' + filename + ' > ' + filename + '.sha1\n')
 
-    with open(indir, 'untar_files.sh') as f:
+    with open(indir, 'compute_checksums.sh') as f:
         f.writelines(outlines)
 
 

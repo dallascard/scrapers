@@ -1,10 +1,11 @@
 import os
 import json
-from glob import glob
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
-# Make a bash script to untar only the .txt files from downloaded tar.bz2 files
+
+# This script should download the .json metadata files for each paper downloaded and untarred using
+# make_ocr_download_script.py and make_ocr_untar_script.py
 
 def main():
     usage = "%prog basedir"
@@ -15,19 +16,6 @@ def main():
     #                  help='Divide data by issue: default=%default')
 
     (options, args) = parser.parse_args()
-
-    indir = args[0]
-
-    outlines = []
-
-    files = sorted(glob(os.path.join(indir, '*.bz2')))
-    for infile in files:
-        parts = infile.split()
-        filename = parts[1]
-        outlines.append('tar -xvf ' + filename + ' --wildcards "*.txt"\n')
-
-    with open(indir, 'untar_files.sh') as f:
-        f.writelines(outlines)
 
 
 if __name__ == '__main__':

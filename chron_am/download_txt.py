@@ -8,6 +8,9 @@ from tqdm import tqdm
 from common.requests_get import download, get
 
 
+# Download text files from batches of Chronicling Ameirca
+# WARNING: SLOW! use make_download_ocr_script.py instead!
+
 def main():
     usage = "%prog outdir"
     parser = OptionParser(usage=usage)
