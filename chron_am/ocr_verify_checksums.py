@@ -35,16 +35,19 @@ def main():
         sha1s[filename] = sha1
 
     files = sorted(glob(os.path.join(indir, '*.tar.bz2')))
+    failed = []
     for infile in files:
         sha1file = infile + '.sha1'
         with open(sha1file) as f:
             data = f.read()
         sha1 = data.split()[0]
-        match = False
         basedir, filename = os.path.split(infile)
-        if sha1 == sha1s[filename]:
-            match = True
-        print(match, infile, sha1, sha1s[filename])
+        if sha1 != sha1s[filename]:
+            failed.append(infile)
+
+    for infile in failed:
+        print(infile, 'failed')
+    print("{:d} pasesed, {:d} failed".format(len(files) - len(failed), len(failed)))
 
 
 if __name__ == '__main__':
