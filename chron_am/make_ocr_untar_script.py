@@ -26,7 +26,7 @@ def main():
         filename = parts[1]
         outlines.append('tar -xvf ' + filename + ' --wildcards "*.txt"\n')
 
-    with open(indir, 'untar_files.sh') as f:
+    with open(os.path.join(indir, 'untar_files.sh'), 'w') as f:
         f.writelines(outlines)
 
 
