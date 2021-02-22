@@ -22,7 +22,7 @@ def main():
 
     files = sorted(glob(os.path.join(indir, '*.bz2')))
     for infile in files:
-        parts = infile.split()
+        parts = os.path.split(infile)
         filename = parts[1]
         outlines.append('tar -xvf ' + filename + ' --wildcards "*.txt"\n')
 
