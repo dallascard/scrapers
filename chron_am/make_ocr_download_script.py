@@ -8,15 +8,19 @@ from tqdm import tqdm
 from common.requests_get import download, get
 
 
+# Download the index file for OCR batches, and write a bash script to download using wget
+
 def main():
     usage = "%prog outdir"
     parser = OptionParser(usage=usage)
-    parser.add_option('--start-date', type=str, default='2021015',
+    parser.add_option('--start-date', type=str, default='17000101',
                       help='Start downloading from this date: default=%default')
-    parser.add_option('--max-files', type=int, default=10,
-                      help='Limit the number of files to download: default=%default')
-    parser.add_option('--overwrite', action="store_true", default=False,
-                      help='Overwrite data files: default=%default')
+    parser.add_option('--first', type=int, default=0,
+                      help='First file: default=%default')
+    parser.add_option('--last', type=int, default=10,
+                      help='Last file: default=%default')
+    #parser.add_option('--overwrite', action="store_true", default=False,
+    #                  help='Overwrite data files: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
 
@@ -25,8 +29,9 @@ def main():
     outdir = args[0]
 
     start_date = options.start_date
-    max_files = options.max_files
-    overwrite = options.overwrite
+    first = options.first
+    last = options.last
+    #overwrite = options.overwrite
     overwrite_index = options.overwrite_index
 
     year = int(start_date[:4])
@@ -48,9 +53,11 @@ def main():
         data = json.load(f)
 
     items = data['ocr']
+    print(len(items))
 
-    count = 0
-    for item in tqdm(items):
+    outlines = []
+
+    for item in tqdm(items[first:last]):
         url = item['url']
         filename = item['name']
         timestamp = item['created']
@@ -60,17 +67,15 @@ def main():
         size = item['size']
         date = dt.date(year=year, month=month, day=day)
         if date >= start_date:
-            outfile = os.path.join(outdir, filename)
-            if overwrite or not os.path.exists(outfile):
-                print("Downloading", url, "to", outfile, '(size=', str(size) + ')')
-                download(url, outfile, binary=True, stream=True)
-                count += 1
-            else:
-                print("Skipping", outfile)
+            print("Adding", url, filename, size)
+            outlines.append('wget ' + url + '\n')
         else:
-            print("Skipping", filename, ":", date, "after", start_date)
-        if count >= max_files:
-            break
+            print("Skipping", url)
+
+    outfile = os.path.join(outdir, 'download_' + str(start_date) + '_' + str(first) + '-' + str(last) + '.sh')
+    with open(outfile, 'w') as f:
+        for line in outlines:
+            f.write(line)
 
 
 if __name__ == '__main__':
