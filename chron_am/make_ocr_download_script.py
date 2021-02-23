@@ -66,13 +66,13 @@ def main():
         day = int(timestamp[8:10])
         size = item['size']
         date = dt.date(year=year, month=month, day=day)
-        if date >= start_date and not os.path.exists(filename):
+        if date >= start_date and not os.path.exists(os.path.join(outdir, filename)):
             print("Adding", url, filename, size)
             outlines.append('wget ' + url + '\n')
         else:
             print("Skipping", url)
 
-    outfile = os.path.join(outdir, 'download_' + str(start_date) + '_' + str(first) + '-' + str(last) + '.sh')
+    outfile = os.path.join(outdir, 'download_' + str(start_date) + '_' + str(start) + '-' + str(end) + '.sh')
     with open(outfile, 'w') as f:
         for line in outlines:
             f.write(line)
