@@ -81,6 +81,7 @@ def main():
         else:
             print("Skipping", url)
 
+    print("Added {:d} files in total".format(len(outlines)))
     outfile = os.path.join(outdir, 'download_' + str(start_date) + '_' + str(start) + '-' + str(end) + '.sh')
     with open(outfile, 'w') as f:
         for line in outlines:
