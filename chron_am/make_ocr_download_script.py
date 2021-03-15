@@ -1,6 +1,7 @@
 import os
 import json
 import datetime as dt
+from glob import glob
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
@@ -19,8 +20,8 @@ def main():
                       help='First file: default=%default')
     parser.add_option('--end', type=int, default=10,
                       help='Last file: default=%default')
-    #parser.add_option('--overwrite', action="store_true", default=False,
-    #                  help='Overwrite data files: default=%default')
+    parser.add_option('--sha1-dir', type=str, default=None,
+                      help='If given, skip files with existing sha1 files in this dir: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
 
@@ -31,8 +32,13 @@ def main():
     start_date = options.start_date
     start = options.start
     end = options.end
-    #overwrite = options.overwrite
+    sha1_dir = options.sha1_dir
     overwrite_index = options.overwrite_index
+
+    sha1_files = set()
+    if sha1_dir is not None:
+        files = glob(os.path.join(sha1_dir, '*.sha1'))
+        sha1_files = set([os.path.basename(f) for f in files])
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -66,7 +72,9 @@ def main():
         day = int(timestamp[8:10])
         size = item['size']
         date = dt.date(year=year, month=month, day=day)
-        if date >= start_date and not os.path.exists(os.path.join(outdir, filename)):
+        if sha1_dir is not None and os.path.exists(os.path.join(outdir, filename + '.sha1')):
+            print("Skipping", url, "with existing sha1")
+        elif date >= start_date and not os.path.exists(os.path.join(outdir, filename)):
             print("Adding", url, filename, size)
             outlines.append('wget ' + url + '\n')
         else:
