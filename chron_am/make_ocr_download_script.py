@@ -39,6 +39,7 @@ def main():
     if sha1_dir is not None:
         files = glob(os.path.join(sha1_dir, '*.sha1'))
         sha1_files = set([os.path.basename(f) for f in files])
+        print("Found {:d} sha1 files".format(len(sha1_files)))
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -72,7 +73,7 @@ def main():
         day = int(timestamp[8:10])
         size = item['size']
         date = dt.date(year=year, month=month, day=day)
-        if sha1_dir is not None and os.path.exists(os.path.join(outdir, filename + '.sha1')):
+        if sha1_dir is not None and os.path.exists(os.path.join(sha1_dir, filename + '.sha1')):
             print("Skipping", url, "with existing sha1")
         elif date >= start_date and not os.path.exists(os.path.join(outdir, filename)):
             print("Adding", url, filename, size)
