@@ -24,6 +24,7 @@ def main():
     for infile in files:
         parts = os.path.split(infile)
         filename = parts[1]
+        outlines.append('touch ' + filename + '.temp' + '\n')
         outlines.append('tar -xvf ' + filename + ' --wildcards "*.txt"\n')
 
     with open(os.path.join(indir, 'untar_files.sh'), 'w') as f:
