@@ -7,6 +7,8 @@ from optparse import OptionParser
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)
+    parser.add_option('--basedir', type=str, default='data/neurips/',
+                      help='Data directory: default=%default')
     parser.add_option('--first-year', type=int, default=1987,
                       help='First year: default=%default')
     parser.add_option('--last-year', type=int, default=2020,
@@ -18,8 +20,7 @@ def main():
 
     first = options.first_year
     last = options.last_year
-
-    neurips_dir = os.path.join('data', 'neurips')
+    neurips_dir = options.basedir
 
     for year in range(first, last+1):
         year_dirs = glob.glob(os.path.join(neurips_dir, str(year)))

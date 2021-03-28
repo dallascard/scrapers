@@ -16,6 +16,8 @@ from common.requests_get import get
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)
+    parser.add_option('--basedir', type=str, default='data/neurips/',
+                      help='Data directory: default=%default')
     parser.add_option('--first-year', type=int, default=1987,
                       help='First year: default=%default')
     parser.add_option('--last-year', type=int, default=2020,
@@ -27,12 +29,12 @@ def main():
 
     (options, args) = parser.parse_args()
 
+    neurips_dir = options.basedir
     first = options.first_year
     last = options.last_year
     overwrite = options.overwrite
     clear_log = options.clear_log
 
-    neurips_dir = os.path.join('data', 'neurips')
     if not os.path.exists(neurips_dir):
         os.makedirs(neurips_dir)
     logfile = os.path.join(neurips_dir, 'errors.log')

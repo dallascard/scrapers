@@ -11,8 +11,11 @@ from common.requests_get import get
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)
+    parser.add_option('--basedir', type=str, default='data/neurips/',
+                      help='Data directory: default=%default')
+    (options, args) = parser.parse_args()
 
-    neurips_dir = os.path.join('data', 'neurips')
+    neurips_dir = options.basedir
     if not os.path.exists(neurips_dir):
         os.makedirs(neurips_dir)
 

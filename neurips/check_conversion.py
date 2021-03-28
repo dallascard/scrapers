@@ -6,14 +6,13 @@ from optparse import OptionParser
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)
-    #parser.add_option('--year', type=str, default='*',
-    #                  help='Year to process ("*" for all): default=%default')
-    #parser.add_option('--by-issue', action="store_true", default=False,
-    #                  help='Divide data by issue: default=%default')
+    parser.add_option('--basedir', type=str, default='data/neurips/',
+                      help='Data directory: default=%default')
 
     (options, args) = parser.parse_args()
 
-    neurips_dir = os.path.join('data', 'neurips')
+    neurips_dir = options.basedir
+
     year_dirs = sorted(glob.glob(os.path.join(neurips_dir, '*')))
     for year_dir in year_dirs:
         pdf_dir = os.path.join(year_dir, 'pdfs')
