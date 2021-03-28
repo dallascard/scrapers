@@ -6,6 +6,7 @@ from collections import defaultdict, Counter
 
 # Make a bash script to untar only the .txt files from downloaded tar.bz2 files
 
+
 def main():
     usage = "%prog basedir"
     parser = OptionParser(usage=usage)
