@@ -9,7 +9,7 @@ from common.requests_get import download, get
 # This script should download the index files for each batch of OCR files
 
 def main():
-    usage = "%prog basedir outdir"
+    usage = "%prog outdir"
     parser = OptionParser(usage=usage)
     #parser.add_option('--issue', type=str, default='immigration',
     #                  help='Issue: default=%default')
@@ -41,7 +41,7 @@ def main():
             except AssertionError as e:
                 print(next)
                 raise e
-            target = next_target
+            target = int(next_target)
         else:
             done = True
 
