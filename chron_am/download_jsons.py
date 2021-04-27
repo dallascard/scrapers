@@ -23,7 +23,7 @@ def main():
     target = 1
     done = False
     while done is False:
-
+        print(target)
         url = 'https://chroniclingamerica.loc.gov/batches/' + str(target) + '.json'
         outfile = os.path.join(outdir, str(target) + '.json')
         if not os.path.exists(outfile):
@@ -34,13 +34,10 @@ def main():
 
         next = data['next']
         if next is not None:
+            print(next)
             filename = next.split('/')[-1]
             next_target = filename.split('.')[0]
-            try:
-                assert int(next_target) == target + 1
-            except AssertionError as e:
-                print(next)
-                raise e
+            assert int(next_target) == target + 1
             target = int(next_target)
         else:
             done = True
