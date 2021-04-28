@@ -8,6 +8,6 @@ To do this, run make_ocr_download_script.py, which will produce a bash script to
 Then run make_ocr_untar_script.py, which will create a bash script to untar the .txt files from all the downloaded files
 You can then delete the .tar.bz2 files
 
-Run download_jsons.py to download the meta-data for each batch
+Then, run download_metadata.py to download the accompanying metadata
 
 

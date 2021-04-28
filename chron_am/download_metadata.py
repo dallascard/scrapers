@@ -64,6 +64,7 @@ def main():
             for lccn in lccns:
                 lccn_counter[lccn] += 1
                 url = 'https://chroniclingamerica.loc.gov/lccn/' + str(lccn) + '.json'
+                filename = lccn + '.json'
                 outfile = os.path.join(lccn_dir, filename)
                 if os.path.exists(outfile):
                     print("Skipping existing lccn:", lccn)
