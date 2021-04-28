@@ -52,6 +52,7 @@ def main():
         for batch in data['batches']:
             url = batch['url']
             filename = url.split('/')[-1]
+            print(filename)
             outfile = os.path.join(batch_dir, filename)
             if not os.path.exists(outfile):
                 download(url, outfile)
@@ -72,7 +73,7 @@ def main():
                     download(url, outfile)
 
         # get the next group of batches
-        if 'next' in data['next'] and data['next'] is not None:
+        if 'next' in data and data['next'] is not None:
             next_link = data['next']
             print(next_link)
             filename = next_link.split('/')[-1]
