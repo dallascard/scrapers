@@ -3,7 +3,7 @@ import json
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
-from common.requests_get import download, get
+from common.requests_get import download
 
 
 # This script should download the index files for each batch of OCR files
@@ -24,9 +24,15 @@ def main():
     if not os.path.exists(group_dir):
         os.makedirs(group_dir)
 
-    outdir = os.path.join(basedir, 'batches')
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    batch_dir = os.path.join(basedir, 'batches')
+    if not os.path.exists(batch_dir):
+        os.makedirs(batch_dir)
+
+    lccn_dir = os.path.join(basedir, 'lccns')
+    if not os.path.exists(lccn_dir):
+        os.makedirs(lccn_dir)
+
+    lccn_counter = Counter()
 
     target = 1
     done = False
@@ -46,20 +52,37 @@ def main():
         for batch in data['batches']:
             url = batch['url']
             filename = url.split('/')[-1]
-            outfile = os.path.join(outdir, filename)
+            outfile = os.path.join(batch_dir, filename)
             if not os.path.exists(outfile):
                 download(url, outfile)
 
-        next = data['next']
-        if next is not None:
-            print(next)
-            filename = next.split('/')[-1]
+            # download the metadata associated with each lccn
+            with open(outfile) as f:
+                batch_metadata = json.load(f)
+
+            lccns = batch_metadata['lccns']
+            for lccn in lccns:
+                lccn_counter[lccn] += 1
+                url = 'https://chroniclingamerica.loc.gov/lccn/' + str(lccn) + '.json'
+                outfile = os.path.join(lccn_dir, filename)
+                if os.path.exists(outfile):
+                    print("Skipping existing lccn:", lccn)
+                else:
+                    download(url, outfile)
+
+        # get the next group of batches
+        if 'next' in data['next'] and data['next'] is not None:
+            next_link = data['next']
+            print(next_link)
+            filename = next_link.split('/')[-1]
             next_target = filename.split('.')[0]
             assert int(next_target) == target + 1
             target = int(next_target)
         else:
             done = True
 
+    for lccn, count in lccn_counter.most_common(n=10):
+        print(lccn, count)
 
 
 if __name__ == '__main__':
