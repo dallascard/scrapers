@@ -11,7 +11,7 @@ import wget
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)
-    parser.add_option('--basedir', type=str, default='data/icml/',
+    parser.add_option('--basedir', type=str, default='data/iclr/',
                       help='Data directory: default=%default')
     parser.add_option('--first-year', type=int, default=2018,
                       help='First year: default=%default')
@@ -24,16 +24,16 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    icml_dir = options.basedir
+    iclr_dir = options.basedir
     first = options.first_year
     last = options.last_year
     overwrite = options.overwrite
     clear_log = options.clear_log
 
-    if not os.path.exists(icml_dir):
-        os.makedirs(icml_dir)
+    if not os.path.exists(iclr_dir):
+        os.makedirs(iclr_dir)
 
-    logfile = os.path.join(icml_dir, 'errors.log')
+    logfile = os.path.join(iclr_dir, 'errors.log')
     if clear_log:
         print("Clearing logfile:", logfile)
         with open(logfile, 'w') as f:
@@ -42,11 +42,11 @@ def main():
     link_name_counter = Counter()
     for year in range(first, last+1):
 
-        year_dir = os.path.join(icml_dir, str(year))
+        year_dir = os.path.join(iclr_dir, str(year))
         if not os.path.exists(year_dir):
             os.makedirs(year_dir)
 
-        files = sorted(glob(os.path.join('icml', 'links', str(year), 'conference', '*.txt')))
+        files = sorted(glob(os.path.join('iclr', 'links', str(year), 'conference', '*.txt')))
         for infile in files:
             n_pdfs = 0
             n_links = 0
@@ -55,8 +55,8 @@ def main():
             with open(infile) as f:
                 lines = f.readlines()
 
-            paper_type_dir = os.path.join(icml_dir, str(year), 'conference', paper_type)
-            outdir = os.path.join(icml_dir, str(year), 'conference', paper_type, 'pdfs')
+            paper_type_dir = os.path.join(iclr_dir, str(year), 'conference', paper_type)
+            outdir = os.path.join(iclr_dir, str(year), 'conference', paper_type, 'pdfs')
             if not os.path.exists(outdir):
                 os.makedirs(outdir)
 
