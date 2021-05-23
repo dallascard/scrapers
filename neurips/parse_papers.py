@@ -49,7 +49,7 @@ def main():
         for infile in tqdm(text_files):
             n_files += 1
             basename = os.path.basename(infile)
-            tokenized_sentences = tokenize(nlp, infile, min_para_tokens)
+            tokenized_sentences = tokenize(nlp, infile,min_para_tokens)
             if len(tokenized_sentences) == 0:
                 print("\nError: No lines extracted from", infile)
             else:
@@ -59,7 +59,7 @@ def main():
                 # excluded short "sentences" and those that don't have any letters
                 rejoined = ' '.join(sent)
                 if len(sent) >= min_sent_tokens and re.match(r'.*[a-zA-Z].*', rejoined) is not None:
-                    outline = {'id': 's' + str(count).zfill(7), 'year': year, 'paper': basename, 'tokens': sent}
+                    outline = {'id': 's' + str(count).zfill(7), 'year': year, 'paper': basename, 'tokens': [sent]}
                     outlines.append(outline)
                     plain_sents.append(rejoined)
                     count += 1
