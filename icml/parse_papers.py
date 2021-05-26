@@ -93,10 +93,10 @@ def tokenize(nlp, infile, min_para_tokens):
     for line in lines:
         # start collecting when we see the abstract
         lower_line = line.lower()
-        if 'abstract' in lower_line and not found_references:
+        if lower_line.startswith('abstract') and not found_references:
             found_abstract_intro = True
         # stop collecting when we see references or acknowledgements
-        if 'references' in lower_line or 'acknowledgement' in lower_line or 'acknowledgment' in lower_line:
+        if lower_line.startswith('references') or 'acknowledgement' in lower_line or 'acknowledgment' in lower_line:
             if found_abstract_intro:
                 found_references = True
         # try to take lines starting with the beginning and ending at the references
