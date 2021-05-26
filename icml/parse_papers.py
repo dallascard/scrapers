@@ -88,18 +88,19 @@ def tokenize(nlp, infile, min_para_tokens):
     # convert lines to paragraphs as best we can
     paragraphs = []
     new_paragraph = True
-    #found_abstract_intro = False
+    found_abstract_intro = False
     found_references = False
     for line in lines:
-        # start collecting at the beginning, since not all papers mark the start of their abstract
+        # start collecting when we see the abstract
         lower_line = line.lower()
-        #if not found_references and 'abstract' in lower_line or 'introduction' in lower_line or 'background' in lower_line:
-        #    found_abstract_intro = True
+        if 'abstract' in lower_line and not found_references:
+            found_abstract_intro = True
         # stop collecting when we see references or acknowledgements
         if 'references' in lower_line or 'acknowledgement' in lower_line or 'acknowledgment' in lower_line:
-            found_references = True
+            if found_abstract_intro:
+                found_references = True
         # try to take lines starting with the beginning and ending at the references
-        if not found_references:
+        if found_abstract_intro and not found_references:
             # if a line is blank, start a new paragraph on the next line
             if len(line.strip()) == 0:
                 new_paragraph = True
