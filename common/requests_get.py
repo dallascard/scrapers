@@ -11,12 +11,38 @@ def get(url, html_only=True):
         print("Requesting", url)
         with closing(requests.get(url)) as response:
             if is_good_response(response, html_only=html_only):
-                print("Getting content")
                 data = response.content
                 return data
             else:
                 print(response.status_code, response.headers)
                 return None
+    except RequestException as e:
+        print('Error during requests to {0} : {1}'.format(url, str(e)))
+        return None
+
+
+def get_with_status(url, html_only=True, retry=False):
+    """
+    Same as above, but also return status information, and include an option to retry
+    :param url: url to request
+    :param html_only: flag to limit to html
+    :param retry: if yes, retry once after bad request
+    :return: response (data, status_code, etc.)
+    """
+    try:
+        print("Requesting", url)
+        with closing(requests.get(url)) as response:
+            if is_good_response(response, html_only=html_only):
+                return response
+            elif retry:
+                print(response.status_code, response.headers)
+                print("Sleeping")
+                time.sleep(10)
+                print("Retrying")
+                return get_with_status(url, html_only=html_only, retry=False)
+            else:
+                print(response.status_code, response.headers)
+                return response
     except RequestException as e:
         print('Error during requests to {0} : {1}'.format(url, str(e)))
         return None
