@@ -21,6 +21,8 @@ def main():
                       help='Start month: default=%default')
     parser.add_option('--sleep', type=int, default=3,
                       help='Time to sleep after each request: default=%default')
+    parser.add_option('--long-sleep', type=int, default=10,
+                      help='Time to sleep after a 429 response: default=%default')
     parser.add_option('--api-file', type=str, default='api_keys/nyt.txt',
                       help='Location of file containing your NYT API key: default=%default')
     #parser.add_option('--by-issue', action="store_true", default=False,
@@ -33,6 +35,7 @@ def main():
     last_year = options.last_year
     start_month = options.start_month
     sleep = options.sleep
+    long_sleep = options.long_sleep
     key_file = options.api_file
 
     if not os.path.exists(key_file):
@@ -51,7 +54,7 @@ def main():
     while year <= last_year:
         while month < 13:
             url = f'https://api.nytimes.com/svc/archive/v1/{year}/{month}.json?api-key={key}'
-            response = get_with_status(url, html_only=False, retry=True)
+            response = get_with_status(url, html_only=False, retry=True, retry_sleep=long_sleep)
             data = response.content
             status = response.status_code
             if status != 200 or data is None:

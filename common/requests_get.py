@@ -21,7 +21,7 @@ def get(url, html_only=True):
         return None
 
 
-def get_with_status(url, html_only=True, retry=False):
+def get_with_status(url, html_only=True, retry=False, retry_sleep=10):
     """
     Same as above, but also return status information, and include an option to retry
     :param url: url to request
@@ -37,7 +37,7 @@ def get_with_status(url, html_only=True, retry=False):
             elif retry:
                 print(response.status_code, response.headers)
                 print("Sleeping")
-                time.sleep(10)
+                time.sleep(retry_sleep)
                 print("Retrying")
                 return get_with_status(url, html_only=html_only, retry=False)
             else:
