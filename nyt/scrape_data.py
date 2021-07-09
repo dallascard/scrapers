@@ -19,7 +19,7 @@ def main():
                       help='Start year: default=%default')
     parser.add_option('--start-month', type=int, default=1,
                       help='Start month: default=%default')
-    parser.add_option('--sleep', type=int, default=3,
+    parser.add_option('--sleep', type=int, default=4,
                       help='Time to sleep after each request: default=%default')
     parser.add_option('--long-sleep', type=int, default=10,
                       help='Time to sleep after a 429 response: default=%default')
