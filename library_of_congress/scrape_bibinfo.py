@@ -1,10 +1,10 @@
 import os
 import json
+from subprocess import call
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
-import wget
-
+# Download the public database of bibliographic metadata from the Library of Congress
 
 def main():
     usage = "%prog"
@@ -27,7 +27,9 @@ def main():
         target_url = base_url + filename
         print(target_url)
         outfile = os.path.join(outdir, filename)
-        wget.download(target_url, out=outfile)
+        cmd = ['wget', target_url, '-O', outfile]
+        print(' '.join(cmd))
+        call(cmd)
 
 
 if __name__ == '__main__':
