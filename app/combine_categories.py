@@ -5,6 +5,8 @@ from optparse import OptionParser
 from collections import defaultdict, Counter
 
 
+# Combine all data into a single file
+
 def main():
     usage = "%prog scrapers_dir outfile.jsonlist"
     parser = OptionParser(usage=usage)
