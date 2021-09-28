@@ -27,7 +27,7 @@ def main():
 
     for infile in files[:1]:
         print("Reading", infile)
-        parser = etree.XMLParser(attribute_defaults=True, dtd_validation=True, huge_tree=True)
+        parser = etree.XMLParser(attribute_defaults=True, dtd_validation=False, huge_tree=True)
         tree = etree.parse(infile, parser)
 
         for elem in tree.iter():
