@@ -36,14 +36,17 @@ def main():
 
         entries = records.getchildren()
 
-        count = 0
+        n_records = 0
+        n_100 = 0
         print("Parsing author pages")
         for entry in tqdm(entries):
             if entry.tag == 'record':
+                n_records += 1
                 for child in entry.getchildren():
                     if child.tag == 'datafield':
                         tag = child.attrib['tag']
                         if tag == '100':
+                            n_100 += 1
                             for subchild in child.getchildren():
                                 if subchild.tag == 'subfield':
                                     code = subchild.attrib['code']
@@ -51,6 +54,8 @@ def main():
                                         author = subchild.text
                                         author_counter[author] += 1
 
+        print(n_records)
+        print(n_100)
     for a, c in author_counter.most_common(n=20):
         print(a, c)
 
