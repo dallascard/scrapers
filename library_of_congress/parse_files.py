@@ -30,15 +30,10 @@ def main():
         parser = etree.XMLParser(attribute_defaults=True, dtd_validation=False, huge_tree=True)
         tree = etree.parse(infile, parser)
 
-        for elem in tree.iter():
-            entries = elem
-            print(elem)
-            break
-
+        print("Parsing")
         n_records = 0
         n_100 = 0
-        print("Parsing author pages")
-        for entry in tqdm(entries):
+        for entry in tree.iter():
             if entry.tag == 'record':
                 n_records += 1
                 for child in entry.getchildren():
