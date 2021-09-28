@@ -9,7 +9,7 @@ from collections import defaultdict, Counter
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)
-    parser.add_option('--basedir', type=str, default='data/iclr/',
+    parser.add_option('--basedir', type=str, default='data/loc/',
                       help='Data directory: default=%default')
     #parser.add_option('--by-issue', action="store_true", default=False,
     #                  help='Divide data by issue: default=%default')
