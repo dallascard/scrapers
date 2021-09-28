@@ -34,6 +34,7 @@ def main():
         n_records = 0
         n_100 = 0
         for entry in tree.iter():
+            print(entry)
             if entry.tag == 'record':
                 n_records += 1
                 for child in entry.getchildren():
