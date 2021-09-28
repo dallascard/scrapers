@@ -34,16 +34,16 @@ def main():
         n_records = 0
         n_100 = 0
         for entry in tree.iter():
-            print(entry)
-            if entry.tag == 'record':
+            #print(entry)
+            if entry.tag == '{http://www.loc.gov/MARC21/slim}record':
                 n_records += 1
                 for child in entry.getchildren():
-                    if child.tag == 'datafield':
+                    if child.tag == '{http://www.loc.gov/MARC21/slim}datafield':
                         tag = child.attrib['tag']
                         if tag == '100':
                             n_100 += 1
                             for subchild in child.getchildren():
-                                if subchild.tag == 'subfield':
+                                if subchild.tag == '{http://www.loc.gov/MARC21/slim}subfield':
                                     code = subchild.attrib['code']
                                     if code == 'a':
                                         author = subchild.text
