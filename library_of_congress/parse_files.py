@@ -4,6 +4,7 @@ from glob import glob
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
+from tqdm import tqdm
 from lxml import etree
 
 # Parse the xml files from LoC
@@ -37,7 +38,7 @@ def main():
 
         count = 0
         print("Parsing author pages")
-        for entry in entries:
+        for entry in tqdm(entries):
             if entry.tag == 'record':
                 for child in entry.getchildren():
                     if child.tag == 'datafield':
