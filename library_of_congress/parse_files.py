@@ -24,17 +24,16 @@ def main():
     print(len(files))
 
     author_counter = Counter()
+    n_records = 0
+    n_100 = 0
 
-    for infile in files[:1]:
-        print("Reading", infile)
+    for infile in files:
+        print("Reading", infile, n_records, n_100)
         parser = etree.XMLParser(attribute_defaults=True, dtd_validation=False, huge_tree=True)
         tree = etree.parse(infile, parser)
 
         print("Parsing")
-        n_records = 0
-        n_100 = 0
         for entry in tree.iter():
-            #print(entry)
             if entry.tag == '{http://www.loc.gov/MARC21/slim}record':
                 n_records += 1
                 for child in entry.getchildren():
@@ -49,10 +48,14 @@ def main():
                                         author = subchild.text
                                         author_counter[author] += 1
 
-        print(n_records)
-        print(n_100)
+    print(n_records, 'records')
+    print(n_100, 'with datafield tag=100')
+
     for a, c in author_counter.most_common(n=20):
         print(a, c)
+
+    with open(os.path.join(basedir, 'author_counts.json'), 'w') as f:
+        json.dump(author_counter.most_common(), f, indent=2)
 
 
 if __name__ == '__main__':
