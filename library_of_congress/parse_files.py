@@ -19,7 +19,8 @@ def main():
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
-    files = sorted(glob(os.path.join(basedir, '*.gz')))
+    files = sorted(glob(os.path.join(basedir, '*.xml')))
+    print(len(files))
 
     author_counter = Counter()
 
