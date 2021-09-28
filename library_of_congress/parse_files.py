@@ -32,6 +32,7 @@ def main():
 
         for elem in tree.iter():
             entries = elem
+            print(elem)
             break
 
         n_records = 0
