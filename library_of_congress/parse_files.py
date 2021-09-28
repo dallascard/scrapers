@@ -31,10 +31,8 @@ def main():
         tree = etree.parse(infile, parser)
 
         for elem in tree.iter():
-            records = elem
+            entries = elem
             break
-
-        entries = records.getchildren()
 
         n_records = 0
         n_100 = 0
