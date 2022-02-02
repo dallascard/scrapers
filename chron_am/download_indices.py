@@ -29,6 +29,7 @@ def main():
     while response is not None:
         with open(outfile, 'r') as f:
             data = json.load(f)
+        print(list(data.keys()))
         if 'next' not in data:
             response = None
         else:
