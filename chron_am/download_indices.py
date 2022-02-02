@@ -23,20 +23,21 @@ def main():
     target = 'https://chroniclingamerica.loc.gov/batches.json'
     outfile = os.path.join(outdir, 'index_00001.json')
     print(target, outfile)
-    response = download(target, outfile)
+    download(target, outfile)
+    done = False
 
     i = 2
-    while response is not None:
+    while not done:
         with open(outfile, 'r') as f:
             data = json.load(f)
         print(list(data.keys()))
         if 'next' not in data:
-            response = None
+            done = True
         else:
             next_batch = data['next']
             outfile = os.path.join(outdir, 'index_{:s}.json'.format(str(i).zfill(5)))
             print(target, outfile)
-            response = download(next_batch, outfile)
+            download(next_batch, outfile)
             i += 1
 
 
