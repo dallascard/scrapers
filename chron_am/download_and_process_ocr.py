@@ -123,16 +123,17 @@ def main():
         print("Found {:d} files".format(len(files)))
         for infile in files:
             parts = infile.split('/')
-            seq = parts[-2]
-            ed = parts[-3]
-            day = parts[-4]
-            month = parts[-5]
-            year = parts[-6]
             paper = parts[-7]
+            year = parts[-6]
+            month = parts[-5]
+            day = parts[-4]
+            ed = parts[-3].split('-')[1]
+            seq = parts[-2].split('-')[1]
             with open(infile) as f:
                 text = f.read().strip()
             if len(text) > 0:
-                docs_by_paper[paper].append({'y': year, 'm': month, 'd': day, 'e': ed, 's': seq, 't': text})
+                key = '-'.join([str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(ed).zfill(2), str(seq).zfill(2)])
+                docs_by_paper[paper].append({'id': key, 't': text})
 
         # Update indices
         if len(docs_by_paper) > 0:
