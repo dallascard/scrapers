@@ -97,7 +97,8 @@ def main():
 
             command = ['tar', '-xvf', tarfile, '--wildcards', "*.txt", '-C', untarred_dir]
             print(' '.join(command))
-            run(command)
+            #run(command)
+            raise RuntimeError('test')
 
         else:
             raise FileNotFoundError("tarfile not found:", tarfile)
