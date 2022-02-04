@@ -23,13 +23,13 @@ def main():
         lines = f.readlines()
 
     for line in lines:
-        basename = line.split('/')[-1]
+        basename = line.strip().split('/')[-1]
         filename = os.path.join(os.path.join(basedir, basename))
         if os.path.exists(filename):
             file_size = os.path.getsize(filename)
-            print(basename, file_size)
+            print(filename, file_size)
         else:
-            print(basename, 'missing!')
+            print(filename, 'missing!')
 
 
 
