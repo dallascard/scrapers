@@ -76,12 +76,15 @@ def main():
         #if sha1_dir is not None and os.path.exists(os.path.join(sha1_dir, filename + '.sha1')):
         #    print("Skipping", url, "with existing sha1")
         tarfile = os.path.join(tar_files_dir, filename)
-        if date >= start_date and not os.path.exists(tarfile):
+        if date < start_date:
+            print("Skipping download of file {:s} from before".format(filename), start_date)
+        elif os.path.exists(tarfile):
+            print("Skipping download of already existing file", filename)
+        else:
             command = ['wget', url, '-P', tar_files_dir]
+            print("Downloading from", url)
             print(' '.join(command))
             run(command)
-        else:
-            print("Skipping", url, 'download')
 
         # Do untar
         if os.path.exists(tarfile):
@@ -111,7 +114,8 @@ def main():
         # path = tar_file_dir/year/month/day/
         print("Reading and indexing files")
         docs_by_paper = defaultdict(list)
-        files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
+        print(untarred_dir)
+        files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
         print("Found {:d} files".format(len(files)))
         for infile in files:
             parts = infile.split('/')
@@ -135,7 +139,9 @@ def main():
                         f.write(json.dumps(line) + '\n')
 
         print("Cleaning up")
-        shutil.rmtree(os.path.join(untarred_dir, '*'))
+        dirs = glob(os.path.join(untarred_dir, '*'))
+        for d in dirs:
+            shutil.rmtree(d)
 
 
 if __name__ == '__main__':
