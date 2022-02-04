@@ -22,8 +22,8 @@ def main():
                       help='Start downloading from this date: default=%default')
     parser.add_option('--start', type=int, default=0,
                       help='First file: default=%default')
-    #parser.add_option('--end', type=int, default=10,
-    #                  help='Last file: default=%default')
+    parser.add_option('--end', type=int, default=10,
+                      help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
@@ -34,6 +34,7 @@ def main():
     basedir = options.basedir
     start_date = options.start_date
     start = options.start
+    end = options.end
     overwrite_index = options.overwrite_index
 
     year = int(start_date[:4])
@@ -61,7 +62,7 @@ def main():
     items = data['ocr']
     print(len(items))
 
-    for i, item in enumerate(items[start:]):
+    for i, item in enumerate(items[start:end+1]):
         url = item['url']
         filename = item['name']
         timestamp = item['created']
@@ -86,6 +87,7 @@ def main():
             file_size = os.path.getsize(tarfile)
             try:
                 assert file_size == size
+                print("File size is as expected")
             except AssertionError as e:
                 print(file_size)
                 print(size)
