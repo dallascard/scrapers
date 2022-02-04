@@ -44,9 +44,10 @@ def main():
     start_date = dt.date(year=year, month=month, day=day)
 
     tar_files_dir = os.path.join(basedir, 'tar_files')
+    untarred_dir = os.path.join(basedir, 'untarred')
     indexed_dir = os.path.join(basedir, 'indexed')
 
-    for dir in [basedir, tar_files_dir, indexed_dir]:
+    for dir in [basedir, tar_files_dir, untarred_dir, indexed_dir]:
         if not os.path.exists(dir):
             os.makedirs(dir)
 
@@ -93,18 +94,21 @@ def main():
                 print(size)
                 raise e
 
-            command = ['tar', '-xvf', tarfile, '--wildcards', "*.txt"]
+            command = ['tar', '-xvf', tarfile, '--wildcards', "*.txt", '-C', untarred_dir]
             print(' '.join(command))
             run(command)
 
         else:
             raise FileNotFoundError("tarfile not found:", tarfile)
 
+        print("Deleting tar file")
+        os.remove(tarfile)
+
         # Index files
         # path = tar_file_dir/year/month/day/
         print("Reading and indexing files")
         docs_by_paper = defaultdict(list)
-        files = sorted(glob(os.path.join(tar_files_dir, '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
+        files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
         for infile in files:
             parts = infile.split('/')
             seq = parts[-2]
@@ -127,7 +131,7 @@ def main():
                         f.write(json.dumps(line) + '\n')
 
         print("Cleaning up")
-        shutil.rmtree(os.path.join(tar_files_dir, '*'))
+        shutil.rmtree(os.path.join(untarred_dir, '*'))
 
 
 if __name__ == '__main__':
