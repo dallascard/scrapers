@@ -61,14 +61,15 @@ def main():
     items = data['ocr']
     print(len(items))
 
-    for item in tqdm(items[start:]):
+    for i, item in enumerate(items[start:]):
         url = item['url']
         filename = item['name']
         timestamp = item['created']
         year = int(timestamp[:4])
         month = int(timestamp[5:7])
         day = int(timestamp[8:10])
-        size = item['size']
+        size = int(item['size'])
+        print(i+start, url, filename, size)
         date = dt.date(year=year, month=month, day=day)
         #if sha1_dir is not None and os.path.exists(os.path.join(sha1_dir, filename + '.sha1')):
         #    print("Skipping", url, "with existing sha1")
@@ -82,7 +83,15 @@ def main():
 
         # Do untar
         if os.path.exists(tarfile):
-            command = ['tar', '-xvf', filename, '--wildcards', "*.txt"]
+            file_size = os.path.getsize(tarfile)
+            try:
+                assert file_size == size
+            except AssertionError as e:
+                print(file_size)
+                print(size)
+                raise e
+
+            command = ['tar', '-xvf', tarfile, '--wildcards', "*.txt"]
             print(' '.join(command))
             run(command)
 
