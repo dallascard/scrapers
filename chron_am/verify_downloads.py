@@ -17,7 +17,6 @@ def main():
     script = args[0]
 
     basedir = os.path.split(script)[0]
-    print(basedir)
 
     with open(script) as f:
         lines = f.readlines()
@@ -27,10 +26,10 @@ def main():
         filename = os.path.join(os.path.join(basedir, basename))
         if os.path.exists(filename):
             file_size = os.path.getsize(filename)
-            print(filename, file_size)
+            if file_size == 0:
+                print(filename, file_size)
         else:
             print(filename, 'missing!')
-
 
 
 if __name__ == '__main__':
