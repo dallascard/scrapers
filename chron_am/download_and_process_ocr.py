@@ -95,10 +95,11 @@ def main():
                 print("File size expected:", size)
                 raise e
 
-            command = ['tar', '-xvf', tarfile, '--wildcards', "*.txt", '-C', untarred_dir]
+            command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
             print(' '.join(command))
-            #run(command)
-            raise RuntimeError('test')
+            print("Untarring...")
+            run(command)
+            print("Done")
 
         else:
             raise FileNotFoundError("tarfile not found:", tarfile)
@@ -111,6 +112,7 @@ def main():
         print("Reading and indexing files")
         docs_by_paper = defaultdict(list)
         files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
+        print("Found {:d} files".format(len(files)))
         for infile in files:
             parts = infile.split('/')
             seq = parts[-2]
