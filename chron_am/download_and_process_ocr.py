@@ -90,8 +90,9 @@ def main():
                 assert file_size == size
                 print("File size is as expected")
             except AssertionError as e:
-                print(file_size)
-                print(size)
+                print(tarfile)
+                print("File size (actual):", file_size)
+                print("File size expected:", size)
                 raise e
 
             command = ['tar', '-xvf', tarfile, '--wildcards', "*.txt", '-C', untarred_dir]
