@@ -28,6 +28,8 @@ def main():
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
+    parser.add_option('--skip-untar', action="store_true", default=False,
+                      help='Skip untar: default=%default')
 
     (options, args) = parser.parse_args()
 
@@ -36,6 +38,7 @@ def main():
     start = options.start
     end = options.end
     overwrite_index = options.overwrite_index
+    skip_untar = options.skip_untar
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -87,28 +90,29 @@ def main():
             run(command)
 
         # Do untar
-        if os.path.exists(tarfile):
-            file_size = os.path.getsize(tarfile)
-            try:
-                assert file_size == size
-                print("File size is as expected")
-            except AssertionError as e:
-                print(tarfile)
-                print("File size (actual):", file_size)
-                print("File size expected:", size)
-                raise e
+        if not skip_untar:
+            if os.path.exists(tarfile):
+                file_size = os.path.getsize(tarfile)
+                try:
+                    assert file_size == size
+                    print("File size is as expected")
+                except AssertionError as e:
+                    print(tarfile)
+                    print("File size (actual):", file_size)
+                    print("File size expected:", size)
+                    raise e
 
-            command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
-            print(' '.join(command))
-            print("Untarring...")
-            run(command)
-            print("Done")
+                command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
+                print(' '.join(command))
+                print("Untarring...")
+                run(command)
+                print("Done")
 
-        else:
-            raise FileNotFoundError("tarfile not found:", tarfile)
+            else:
+                raise FileNotFoundError("tarfile not found:", tarfile)
 
-        print("Deleting tar file")
-        os.remove(tarfile)
+            print("Deleting tar file")
+            os.remove(tarfile)
 
         # Index files
         # path = tar_file_dir/year/month/day/
@@ -125,7 +129,8 @@ def main():
             month = parts[-5]
             year = parts[-6]
             paper = parts[-7]
-            text = f.read().strip()
+            with open(infile) as f:
+                text = f.read().strip()
             if len(text) > 0:
                 docs_by_paper[paper].append({'y': year, 'm': month, 'd': day, 'e': ed, 's': seq, 't': text})
 
