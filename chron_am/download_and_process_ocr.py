@@ -22,7 +22,7 @@ def main():
                       help='Start downloading from this date: default=%default')
     parser.add_option('--start', type=int, default=0,
                       help='First file: default=%default')
-    parser.add_option('--end', type=int, default=10,
+    parser.add_option('--end', type=int, default=1,
                       help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
@@ -66,7 +66,7 @@ def main():
     items = data['ocr']
     print(len(items))
 
-    for i, item in enumerate(items[start:end+1]):
+    for i, item in enumerate(items[start:end]):
         url = item['url']
         filename = item['name']
         timestamp = item['created']
