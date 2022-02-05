@@ -120,7 +120,9 @@ def main():
         docs_by_paper = defaultdict(list)
         print(untarred_dir)
         files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
+        n_files = len(files)
         print("Found {:d} files".format(len(files)))
+        keys_with_paper = []
         for infile in files:
             parts = infile.split('/')
             paper = parts[-7]
@@ -133,6 +135,7 @@ def main():
                 text = f.read().strip()
             if len(text) > 0:
                 key = '-'.join([str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(ed).zfill(2), str(seq).zfill(2)])
+                keys_with_paper.append((paper,key))
                 docs_by_paper[paper].append({'id': key, 't': text})
 
         # Update indices
@@ -140,14 +143,20 @@ def main():
             for source, lines in docs_by_paper.items():
                 print("Saving index for", source)
                 outfile = os.path.join(indexed_dir, source + '.jsonlist')
-                with open(outfile, 'a') as f:
+                with open(outfile, 'a') as fa:
                     for line in lines:
-                        f.write(json.dumps(line) + '\n')
+                        fa.write(json.dumps(line) + '\n')
 
         print("Cleaning up")
         dirs = glob(os.path.join(untarred_dir, '*'))
         for d in dirs:
             shutil.rmtree(d)
+
+        logfile = tarfile + '.log'
+        with open(logfile, 'w') as fo:
+            fo.write('Indexed ' + str(keys_with_paper) + ' files\n')
+            for paper, key in keys_with_paper:
+                fo.write(paper + '\t' + key + '\n')
 
 
 if __name__ == '__main__':
