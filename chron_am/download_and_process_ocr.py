@@ -79,84 +79,87 @@ def main():
         #if sha1_dir is not None and os.path.exists(os.path.join(sha1_dir, filename + '.sha1')):
         #    print("Skipping", url, "with existing sha1")
         tarfile = os.path.join(tar_files_dir, filename)
-        if date < start_date:
-            print("Skipping download of file {:s} from before".format(filename), start_date)
-        elif os.path.exists(tarfile):
-            print("Skipping download of already existing file", filename)
-        else:
-            command = ['wget', url, '-P', tar_files_dir]
-            print("Downloading from", url)
-            print(' '.join(command))
-            run(command)
-
-        # Do untar
-        if not skip_untar:
-            if os.path.exists(tarfile):
-                file_size = os.path.getsize(tarfile)
-                try:
-                    assert file_size == size
-                    print("File size is as expected")
-                except AssertionError as e:
-                    print(tarfile)
-                    print("File size (actual):", file_size)
-                    print("File size expected:", size)
-                    raise e
-
-                command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
-                print(' '.join(command))
-                print("Untarring...")
-                run(command)
-                print("Done")
-
-            else:
-                raise FileNotFoundError("tarfile not found:", tarfile)
-
-            print("Deleting tar file")
-            os.remove(tarfile)
-
-        # Index files
-        # path = tar_file_dir/year/month/day/
-        print("Reading and indexing files")
-        docs_by_paper = defaultdict(list)
-        print(untarred_dir)
-        files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
-        n_files = len(files)
-        print("Found {:d} files".format(len(files)))
-        keys_with_paper = []
-        for infile in files:
-            parts = infile.split('/')
-            paper = parts[-7]
-            year = parts[-6]
-            month = parts[-5]
-            day = parts[-4]
-            ed = parts[-3].split('-')[1]
-            seq = parts[-2].split('-')[1]
-            with open(infile) as f:
-                text = f.read().strip()
-            if len(text) > 0:
-                key = '-'.join([str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(ed).zfill(2), str(seq).zfill(2)])
-                keys_with_paper.append((paper,key))
-                docs_by_paper[paper].append({'id': key, 't': text})
-
-        # Update indices
-        if len(docs_by_paper) > 0:
-            for source, lines in docs_by_paper.items():
-                print("Saving index for", source)
-                outfile = os.path.join(indexed_dir, source + '.jsonlist')
-                with open(outfile, 'a') as fa:
-                    for line in lines:
-                        fa.write(json.dumps(line) + '\n')
-
-        print("Cleaning up")
-        dirs = glob(os.path.join(untarred_dir, '*'))
-        for d in dirs:
-            shutil.rmtree(d)
-
         logfile = tarfile + '.log'
-        with open(logfile, 'w') as fo:
-            fo.write('Indexed ' + str(keys_with_paper) + ' files\n')
-            for paper, key in keys_with_paper:
-                fo.write(paper + '\t' + key + '\n')
+        if os.path.exists(logfile):
+            print("Skipping file with logfile:", logfile)
+        else:
+            if date < start_date:
+                print("Skipping download of file {:s} from before".format(filename), start_date)
+            elif os.path.exists(tarfile):
+                print("Skipping download of already existing file", filename)
+            else:
+                command = ['wget', url, '-P', tar_files_dir]
+                print("Downloading from", url)
+                print(' '.join(command))
+                run(command)
+
+            # Do untar
+            if not skip_untar:
+                if os.path.exists(tarfile):
+                    file_size = os.path.getsize(tarfile)
+                    try:
+                        assert file_size == size
+                        print("File size is as expected")
+                    except AssertionError as e:
+                        print(tarfile)
+                        print("File size (actual):", file_size)
+                        print("File size expected:", size)
+                        raise e
+
+                    command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
+                    print(' '.join(command))
+                    print("Untarring...")
+                    run(command)
+                    print("Done")
+
+                else:
+                    raise FileNotFoundError("tarfile not found:", tarfile)
+
+                print("Deleting tar file")
+                os.remove(tarfile)
+
+            # Index files
+            # path = tar_file_dir/year/month/day/
+            print("Reading and indexing files")
+            docs_by_paper = defaultdict(list)
+            print(untarred_dir)
+            files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
+            n_files = len(files)
+            print("Found {:d} files".format(len(files)))
+            keys_with_paper = []
+            for infile in files:
+                parts = infile.split('/')
+                paper = parts[-7]
+                year = parts[-6]
+                month = parts[-5]
+                day = parts[-4]
+                ed = parts[-3].split('-')[1]
+                seq = parts[-2].split('-')[1]
+                with open(infile) as f:
+                    text = f.read().strip()
+                if len(text) > 0:
+                    key = '-'.join([str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(ed).zfill(2), str(seq).zfill(2)])
+                    keys_with_paper.append((paper, key))
+                    docs_by_paper[paper].append({'id': key, 't': text})
+
+            # Update indices
+            if len(docs_by_paper) > 0:
+                for source, lines in docs_by_paper.items():
+                    print("Saving index for", source)
+                    outfile = os.path.join(indexed_dir, source + '.jsonlist')
+                    with open(outfile, 'a') as fa:
+                        for line in lines:
+                            fa.write(json.dumps(line) + '\n')
+
+            print("Cleaning up")
+            dirs = glob(os.path.join(untarred_dir, '*'))
+            for d in dirs:
+                shutil.rmtree(d)
+
+            with open(logfile, 'w') as fo:
+                fo.write('Indexed ' + str(keys_with_paper) + ' files\n')
+                for paper, key in keys_with_paper:
+                    fo.write(paper + '\t' + key + '\n')
 
 
 if __name__ == '__main__':
