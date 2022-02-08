@@ -30,6 +30,8 @@ def main():
                       help='Overwrite index of json objects: default=%default')
     parser.add_option('--skip-untar', action="store_true", default=False,
                       help='Skip untar: default=%default')
+    parser.add_option('--skip-size-check', action="store_true", default=False,
+                      help='Skip checking for file size agreement: default=%default')
 
     (options, args) = parser.parse_args()
 
@@ -39,6 +41,7 @@ def main():
     end = options.end
     overwrite_index = options.overwrite_index
     skip_untar = options.skip_untar
+    skip_size_check = options.skip_size_check
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -97,14 +100,19 @@ def main():
             if not skip_untar:
                 if os.path.exists(tarfile):
                     file_size = os.path.getsize(tarfile)
-                    try:
-                        assert file_size == size
-                        print("File size is as expected")
-                    except AssertionError as e:
-                        print(tarfile)
-                        print("File size (actual):", file_size)
-                        print("File size expected:", size)
-                        raise e
+                    if skip_size_check:
+                        print("Skipping size check")
+                        print(file_size)
+                        print(size)
+                    else:
+                        try:
+                            assert file_size == size
+                            print("File size is as expected")
+                        except AssertionError as e:
+                            print(tarfile)
+                            print("File size (actual):", file_size)
+                            print("File size expected:", size)
+                            raise e
 
                     command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
                     print(' '.join(command))
