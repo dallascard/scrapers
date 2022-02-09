@@ -18,6 +18,8 @@ def main():
     parser = OptionParser(usage=usage)
     parser.add_option('--basedir', type=str, default='/u/scr/dcard/data/chron_am',
                       help='Base directory: default=%default')
+    parser.add_option('--logfile', type=str, default='errors.txt',
+                      help='Logfile location (in basedir): default=%default')
     parser.add_option('--start-date', type=str, default='17000101',
                       help='Start downloading from this date: default=%default')
     parser.add_option('--start', type=int, default=0,
@@ -36,6 +38,7 @@ def main():
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
+    logfile = os.path.join(basedir, options.logfile)
     start_date = options.start_date
     start = options.start
     end = options.end
@@ -104,15 +107,14 @@ def main():
                         print("Skipping size check")
                         print(file_size)
                         print(size)
+                    elif file_size == size:
+                        print("File size is as expected")
                     else:
-                        try:
-                            assert file_size == size
-                            print("File size is as expected")
-                        except AssertionError as e:
-                            print(tarfile)
-                            print("File size (actual):", file_size)
-                            print("File size expected:", size)
-                            raise e
+                        print("*** Size file mismatch for:", tarfile, '***')
+                        print("File size (actual):", file_size)
+                        print("File size expected:", size)
+                        with open(logfile, 'a') as fl:
+                            fl.write(' '.join(['Size mismatch for', str(tarfile), str(file_size), str(size)]) + '\n')
 
                     command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
                     print(' '.join(command))
