@@ -38,7 +38,7 @@ def main():
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
-    logfile = os.path.join(basedir, options.logfile)
+    error_log = os.path.join(basedir, options.logfile)
     start_date = options.start_date
     start = options.start
     end = options.end
@@ -113,7 +113,7 @@ def main():
                         print("*** Size file mismatch for:", tarfile, '***')
                         print("File size (actual):", file_size)
                         print("File size expected:", size)
-                        with open(logfile, 'a') as fl:
+                        with open(error_log, 'a') as fl:
                             fl.write(' '.join(['Size mismatch for', str(tarfile), str(file_size), str(size)]) + '\n')
 
                     command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
