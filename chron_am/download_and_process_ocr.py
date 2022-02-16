@@ -119,7 +119,7 @@ def main():
                     command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
                     print(' '.join(command))
                     print("Untarring...")
-                    run(command)
+                    run(command, check=True)
                     print("Done")
 
                 else:
