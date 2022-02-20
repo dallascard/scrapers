@@ -45,7 +45,7 @@ def main():
     target_url = first_target_url
 
     while not done:        
-        target_num = int(os.path.basename(target_url)[-1].split('.')[0])
+        target_num = int(os.path.basename(target_url).split('.')[0])
         try:
             assert target_num == batch_file_num
         except AssertionError as e:
