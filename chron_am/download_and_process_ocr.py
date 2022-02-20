@@ -167,7 +167,7 @@ def main():
                 shutil.rmtree(d)
 
             with open(logfile, 'w') as fo:
-                fo.write('Indexed ' + str(keys_with_paper) + ' files\n')
+                #fo.write('Indexed ' + str(len(keys_with_paper)) + ' files\n')
                 for paper, key in keys_with_paper:
                     fo.write(paper + '\t' + key + '\n')
 
