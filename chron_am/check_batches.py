@@ -40,9 +40,13 @@ def main():
     #indexed_dir = os.path.join(basedir, 'indexed')
     batches_dir = os.path.join(basedir, 'batches')
     tarfile_dir = os.path.join(basedir, 'tar_files')
+    json_dir = os.path.join(basedir, 'extra_jsons')
 
     if not os.path.exists(batches_dir): 
         os.makedirs(batches_dir)
+
+    if not os.path.exists(json_dir): 
+        os.makedirs(json_dir)
 
     done = False
     batch_file_num = 1
@@ -71,6 +75,7 @@ def main():
         print(target_url, len(batches))
         for b_i, batch in enumerate(batches):
             name = batch['name']
+            batch_url = batch['url']
             expected_page_count = int(batch['page_count'])
             lccns = batch['lccns']
             #batches_per_lccn.update(lccns)
@@ -79,13 +84,11 @@ def main():
             logfile = os.path.join(tarfile_dir, name + '.tar.bz2.log')            
             if not os.path.exists(logfile):
                 print('\t' + logfile, 'not found!')                
-
-            """
-            lines_found = 0
-            for lccn in lccns:
-                print('\t' + lccn)
-                indexed_file = os.path.join(indexed_dir, lccn + '.jsonlist')
-            """
+                outfile = os.path.join(json_dir, name + '.json')
+                if not os.path.exists(outfile) or overwrite:
+                    print("Downloading", name)
+                    download(batch_url, outfile)
+                
 
         if 'next' in data:
             batch_file_num += 1
