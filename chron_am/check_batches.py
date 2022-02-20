@@ -31,7 +31,7 @@ def main():
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
-    no_overwrite = options.no_overwrite
+    overwrite = not options.no_overwrite
     #error_log = os.path.join(basedir, options.logfile)
     #start_date = options.start_date
     #start = options.start
@@ -60,7 +60,7 @@ def main():
             raise e
 
         outfile = os.path.join(batches_dir, str(batch_file_num) + '.json')        
-        if os.path.exists(outfile) and no_overwrite:
+        if not os.path.exists(outfile) or overwrite:
             download(target_url, outfile)
 
         with open(outfile, 'r') as f:
