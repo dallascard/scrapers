@@ -93,7 +93,7 @@ def main():
             batch_file_num += 1
             target_url = data['next']
         else:
-            done = False
+            done = True
 
     for b, c in batches_per_lccn.most_common(n=10):
         print(b, c)
