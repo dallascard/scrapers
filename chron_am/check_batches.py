@@ -77,13 +77,7 @@ def main():
             #print('\t' + name, lccns, expected_page_count)
 
             logfile = os.path.join(tarfile_dir, name + '.tar.bz2.log')            
-            try:
-                with open(logfile) as f:
-                    lines = f.readlines()
-                lines_found = len(lines)
-                if expected_page_count != (lines_found - 1):
-                    print('\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found, expected_page_count - lines_found)
-            except FileNotFoundError as e:
+            if not os.path.exists(logfile):
                 print('\t' + logfile, 'not found!')                
 
             """
