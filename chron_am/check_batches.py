@@ -100,9 +100,6 @@ def main():
         else:
             done = True
 
-    for b, c in batches_per_lccn.most_common(n=10):
-        print(b, c)
-
 
 if __name__ == '__main__':
     main()
