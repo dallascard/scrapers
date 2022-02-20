@@ -70,7 +70,7 @@ def main():
         batches = data['batches']
         print(target_url, len(batches))
         for b_i, batch in enumerate(batches):
-            basename = os.path.basename(batch)
+            basename = '.'.join(batch.split('/')[-1].split('.')[:-1])
             name = batch['name']
             expected_page_count = int(batch['page_count'])
             lccns = batch['lccns']
