@@ -64,17 +64,19 @@ def main():
             name = batch['name']
             expected_page_count = int(batch['page_count'])
             lccns = batch['lccns']
+            print('\t' + name)
             lines_found = 0
             for lccn in lccns:
+                print('\t' + lccns)
                 indexed_file = os.path.join(indexed_dir, lccn + '.jsonlist')
                 try:
                     with open(indexed_file) as f:
                         lines = f.readlines()
                     lines_found += len(lines)
                 except FileNotFoundError as e:
-                    print(indexed_file, 'not found!')
+                    print('\t\t' + indexed_file, 'not found!')
             if expected_page_count != lines_found:
-                print('Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found)
+                print('\t\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found)
 
         if 'next' in data:
             batch_file_num += 1
