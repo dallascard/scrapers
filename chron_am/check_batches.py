@@ -45,13 +45,13 @@ def main():
     target_url = first_target_url
 
     while not done:        
-        target_num = int(os.path.splitext(target_url)[-1].split('.')[0])
+        target_num = int(os.path.basename(target_url)[-1].split('.')[0])
         try:
             assert target_num == batch_file_num
         except AssertionError as e:
             print("Mismatch on batch num!", target_url, batch_file_num)
             raise e
-            
+
         outfile = os.path.join(batches_dir, str(batch_file_num) + '.json')        
         download(target_url, outfile)
 
