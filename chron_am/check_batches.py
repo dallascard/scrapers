@@ -24,10 +24,14 @@ def main():
     #                  help='First file: default=%default')
     #parser.add_option('--end', type=int, default=1,
     #                  help='Last file: default=%default')
+    parser.add_option('--no-overwrite', action="store_true", default=False,
+                      help="Don't overwrite batch files: default=%default")
+
 
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
+    no_overwrite = options.no_overwrite
     #error_log = os.path.join(basedir, options.logfile)
     #start_date = options.start_date
     #start = options.start
@@ -44,6 +48,9 @@ def main():
     first_target_url = 'https://chroniclingamerica.loc.gov/batches/{:d}.json'.format(batch_file_num)
     target_url = first_target_url
 
+    batches_per_lccn = Counter()
+
+    print("Downloading batch metadata")
     while not done:        
         target_num = int(os.path.basename(target_url).split('.')[0])
         try:
@@ -53,7 +60,8 @@ def main():
             raise e
 
         outfile = os.path.join(batches_dir, str(batch_file_num) + '.json')        
-        download(target_url, outfile)
+        if os.path.exists(outfile) and no_overwrite:
+            download(target_url, outfile)
 
         with open(outfile, 'r') as f:
             data = json.load(f)
@@ -64,7 +72,9 @@ def main():
             name = batch['name']
             expected_page_count = int(batch['page_count'])
             lccns = batch['lccns']
-            print('\t' + name)
+            batches_per_lccn.update(lccns)
+            print('\t' + name, lccns, expected_page_count)
+            """
             lines_found = 0
             for lccn in lccns:
                 print('\t' + lccn)
@@ -77,12 +87,15 @@ def main():
                     print('\t\t' + indexed_file, 'not found!')
             if expected_page_count != lines_found:
                 print('\t\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found)
+            """
 
         if 'next' in data:
             batch_file_num += 1
             target_url = data['next']
         else:
             done = False
+
+
 
 
 if __name__ == '__main__':
