@@ -67,7 +67,7 @@ def main():
             print('\t' + name)
             lines_found = 0
             for lccn in lccns:
-                print('\t' + lccns)
+                print('\t' + lccn)
                 indexed_file = os.path.join(indexed_dir, lccn + '.jsonlist')
                 try:
                     with open(indexed_file) as f:
