@@ -82,7 +82,7 @@ def main():
                     lines = f.readlines()
                 lines_found = len(lines)
                 if expected_page_count != (lines_found - 1):
-                    print('\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found)
+                    print('\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found, expected_page_count - lines_found)
             except FileNotFoundError as e:
                 print('\t' + logfile, 'not found!')                
 
