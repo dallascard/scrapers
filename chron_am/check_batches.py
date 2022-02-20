@@ -59,7 +59,7 @@ def main():
             data = json.load(f)
 
         batches = data['batches']
-        print(len(target, len(batches)))
+        print(len(target_url, len(batches)))
         for b_i, batch in enumerate(batches):
             name = batch['name']
             expected_page_count = int(batch['page_count'])
