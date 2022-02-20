@@ -70,14 +70,13 @@ def main():
         batches = data['batches']
         print(target_url, len(batches))
         for b_i, batch in enumerate(batches):
-            basename = '.'.join(batch.split('/')[-1].split('.')[:-1])
             name = batch['name']
             expected_page_count = int(batch['page_count'])
             lccns = batch['lccns']
             #batches_per_lccn.update(lccns)
             #print('\t' + name, lccns, expected_page_count)
 
-            logfile = os.path.join(tarfile_dir, basename + '.tar.bz2.log')            
+            logfile = os.path.join(tarfile_dir, name + '.tar.bz2.log')            
             try:
                 with open(logfile) as f:
                     lines = f.readlines()
