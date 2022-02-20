@@ -37,8 +37,9 @@ def main():
     #start = options.start
     #end = options.end
 
-    indexed_dir = os.path.join(basedir, 'indexed')
+    #indexed_dir = os.path.join(basedir, 'indexed')
     batches_dir = os.path.join(basedir, 'batches')
+    tarfile_dir = os.path.join(basedir, 'tar_files')
 
     if not os.path.exists(batches_dir): 
         os.makedirs(batches_dir)
@@ -48,7 +49,7 @@ def main():
     first_target_url = 'https://chroniclingamerica.loc.gov/batches/{:d}.json'.format(batch_file_num)
     target_url = first_target_url
 
-    batches_per_lccn = Counter()
+    #batches_per_lccn = Counter()
 
     print("Downloading batch metadata")
     while not done:        
@@ -69,24 +70,28 @@ def main():
         batches = data['batches']
         print(target_url, len(batches))
         for b_i, batch in enumerate(batches):
+            basename = os.path.basename(batch)
             name = batch['name']
             expected_page_count = int(batch['page_count'])
             lccns = batch['lccns']
-            batches_per_lccn.update(lccns)
-            print('\t' + name, lccns, expected_page_count)
+            #batches_per_lccn.update(lccns)
+            #print('\t' + name, lccns, expected_page_count)
+
+            logfile = os.path.join(tarfile_dir, basename + '.tar.bz2.log')            
+            try:
+                with open(logfile) as f:
+                    lines = f.readlines()
+                lines_found = len(lines)
+                if expected_page_count != (lines_found - 1):
+                    print('\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found)
+            except FileNotFoundError as e:
+                print('\t' + logfile, 'not found!')                
+
             """
             lines_found = 0
             for lccn in lccns:
                 print('\t' + lccn)
                 indexed_file = os.path.join(indexed_dir, lccn + '.jsonlist')
-                try:
-                    with open(indexed_file) as f:
-                        lines = f.readlines()
-                    lines_found += len(lines)
-                except FileNotFoundError as e:
-                    print('\t\t' + indexed_file, 'not found!')
-            if expected_page_count != lines_found:
-                print('\t\t' + 'Page count mismatch:', batch_file_num, b_i, name, lccns, expected_page_count, lines_found)
             """
 
         if 'next' in data:
