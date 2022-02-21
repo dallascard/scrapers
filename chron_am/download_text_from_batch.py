@@ -53,13 +53,13 @@ def main():
     if not os.path.exists(text_dir):
         os.makedirs(text_dir)
 
-    with open(batch_file, 'r') as f:
-        data = json.load(f)
-
-    batches = data['batches']
+    batches = [batch_file]
     print(len(batches))
 
-    for batch in tqdm(batches):
+    for batch_file in tqdm(batches):
+        with open(batch_file, 'r') as f:
+            batch = json.load(f)
+
         batch_name = batch['name']
         batch_url = batch['url']
         page_count = batch['page_count']
