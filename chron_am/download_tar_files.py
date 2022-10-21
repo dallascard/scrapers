@@ -59,7 +59,7 @@ def main():
     logfile = os.path.join(basedir, 'log.csv')
 
     if os.path.exists(logfile):
-        log_df = pd.read_csv(logfile, header=0, index_col=None)
+        log_df = pd.read_csv(logfile, header=0, index_col=0)
     else:
         log_df = pd.DataFrame(columns=['id', 'datetime', 'index', 'filename', 'url', 'action', 'checksum'])
 
@@ -109,69 +109,30 @@ def main():
             run(command)
 
             # compute checksum
+            print("Computing checksum")
             tar_file = os.path.join(tar_files_dir, filename)
             command = ['sha1sum', tar_file, '>', tar_file + '.sha1']
+            print(' '.join(command))
             run(command)
 
             # compare checksums
+            print("Comparing checksum")
             with open(tar_file + '.sha1') as f:
                 checksum = f.read()
             checksum = checksum.strip()
             
             if checksum == sha1:
+                print("Checksum passed")
                 log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'downloaded', 'passed'])
             else:
+                print("Checksum failed")
                 log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'downloaded', 'failed'])
 
-            # untar and extract files
-            command = ['tar', '-C', untarred_dir, '-xf', tarfile, '--wildcards', "*.txt"]
-            print(' '.join(command))
-            print("Untarring...")
-            run(command, check=True)
-            print("Done")
+        current_id += 1
 
-        # Index files
-        # path = tar_file_dir/year/month/day/
-        print("Reading and indexing files")
-        docs_by_paper = defaultdict(list)
-        print(untarred_dir)
-        files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', '*', 'ed-*', 'seq-*', 'ocr.txt')))
-        n_files = len(files)
-        print("Found {:d} files".format(len(files)))
-        keys_with_paper = []
-        for infile in files:
-            parts = infile.split('/')
-            paper = parts[-7]
-            year = parts[-6]
-            month = parts[-5]
-            day = parts[-4]
-            ed = parts[-3].split('-')[1]
-            seq = parts[-2].split('-')[1]
-            with open(infile) as f:
-                text = f.read().strip()
-            if len(text) > 0:
-                key = '-'.join([str(year).zfill(4), str(month).zfill(2), str(day).zfill(2), str(ed).zfill(2), str(seq).zfill(2)])
-                keys_with_paper.append((paper, key))
-                docs_by_paper[paper].append({'id': key, 't': text})
-
-        # Update indices
-        if len(docs_by_paper) > 0:
-            for source, lines in docs_by_paper.items():
-                print("Saving index for", source)
-                outfile = os.path.join(indexed_dir, source + '.jsonlist')
-                with open(outfile, 'a') as fa:
-                    for line in lines:
-                        fa.write(json.dumps(line) + '\n')
-
-        print("Cleaning up")
-        dirs = glob(os.path.join(untarred_dir, '*'))
-        for d in dirs:
-            shutil.rmtree(d)
-
-        with open(logfile, 'w') as fo:
-            #fo.write('Indexed ' + str(len(keys_with_paper)) + ' files\n')
-            for paper, key in keys_with_paper:
-                fo.write(paper + '\t' + key + '\n')
+    temp_df = pd.DataFrame(log_rows)
+    log_df = pd.concat([log_df, temp_df])
+    log_df.to_csv(logfile)
 
 
 if __name__ == '__main__':
