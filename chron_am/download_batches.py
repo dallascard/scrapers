@@ -30,7 +30,7 @@ def main():
                       help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
-    parser.add_option('--pause', type=int, default=30,
+    parser.add_option('--pause', type=int, default=10,
                       help='Time to wait on error: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
@@ -107,8 +107,8 @@ def main():
                 
                 if not os.path.exists(destination_file):
                     print("** ERROR **: File not downloaded:", destination_file)
-                    print("Sleeping for {:d} seconds".format(pause))
-                    time.sleep(pause)
+                    print("Sleeping for 60 seconds")
+                    time.sleep(60)
 
                 elif os.path.getsize(destination_file) == 0:
                     raise RuntimeError("** ERROR **: Empty file:", destination_file)
@@ -117,7 +117,9 @@ def main():
 
                 if attempts >= 10:
                     raise RuntimeError("Failed 10 times on", url)
-
+        
+            print("Pausing for {:d} seconds".format(pause))
+            time.sleep(pause)
 
 if __name__ == '__main__':
     main()
