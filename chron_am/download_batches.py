@@ -107,8 +107,7 @@ def main():
             #output = run(command, capture_output=True)
             #print(type(output))
             #print(output)
-
-            response = download(url, os.path.join(tar_files_dir, filename))
+            response = download(url, os.path.join(tar_files_dir, filename), total=size)
             print("Response")
             print(response)
             time.sleep(pause)

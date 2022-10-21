@@ -48,7 +48,7 @@ def get_with_status(url, html_only=True, retry=False, retry_sleep=10):
         return None
 
 
-def download(url, outfile, binary=True, stream=True, retry=True):
+def download(url, outfile, binary=True, stream=True, retry=True, total=None):
     if binary:
         mode = 'wb'
     else:
@@ -60,7 +60,7 @@ def download(url, outfile, binary=True, stream=True, retry=True):
             if is_good_response(response, html_only=False):
                 with open(outfile, mode) as handle:
                     print("Opening", outfile)
-                    for data in tqdm(response.iter_content()):
+                    for data in tqdm(response.iter_content(), total=total):
                         handle.write(data)
             else:
                 print(response.status_code, response.headers)
