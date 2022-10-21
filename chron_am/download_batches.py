@@ -25,7 +25,7 @@ def main():
                       help='Start downloading from this date (for getting updates): default=%default')
     parser.add_option('--start', type=int, default=0,
                       help='First file: default=%default')
-    parser.add_option('--end', type=int, default=1,
+    parser.add_option('--end', type=int, default=None,
                       help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
@@ -84,6 +84,9 @@ def main():
 
     log_rows = []
 
+    if end is None:
+        end = len(items)
+
     for i, item in enumerate(items[start:end]):
         index = start+i
         url = item['url']
@@ -110,31 +113,6 @@ def main():
             print("Downloading from", url)
             print(' '.join(command))
             run(command)
-
-        # compute checksum
-        print("Computing checksum")
-        tar_file = os.path.join(tar_files_dir, filename)
-        command = ['sha1sum', tar_file, '>', tar_file + '.sha1']
-        print(' '.join(command))
-        result = run(command, capture_output=True)
-
-        output = result.stdout
-        print(output)
-        checksum = output.split()[0].decode("utf-8") 
-        print(checksum)
-
-        if checksum == sha1:
-            print("Checksum passed")
-            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'downloaded', 'passed'])
-        else:
-            print("Checksum failed")
-            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'downloaded', 'failed'])
-
-        current_id += 1
-
-    temp_df = pd.DataFrame(log_rows)
-    log_df = pd.concat([log_df, temp_df])
-    log_df.to_csv(logfile)
 
 
 if __name__ == '__main__':
