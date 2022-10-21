@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import shutil
 import datetime as dt
 from glob import glob
@@ -29,6 +30,8 @@ def main():
                       help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
+    parser.add_option('--pause', type=int, default=5,
+                      help='Pause between files in seconds: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
     parser.add_option('--overwrite', action="store_true", default=False,
@@ -45,6 +48,7 @@ def main():
     start_date = options.start_date
     start = options.start
     end = options.end
+    pause = options.pause
     overwrite_index = options.overwrite_index
     overwrite = options.overwrite
 
@@ -97,13 +101,18 @@ def main():
         elif os.path.exists(tarfile) and not overwrite:
             print("Skipping download of existing file {:s}".format(filename))
         else:
-            #command = ['wget', url, '-P', tar_files_dir]
-            #print("Downloading from", url)
-            #print(' '.join(command))
-            #run(command)
-            response = download(url, os.path.join(tar_files_dir, filename))
-            print("Response")
-            print(response)
+            command = ['wget', url, '-P', tar_files_dir]
+            print("Downloading from", url)
+            print(' '.join(command))
+            output = run(command, capture_output=True)
+            print(type(output))
+            print(output)
+            
+
+            #response = download(url, os.path.join(tar_files_dir, filename))
+            #print("Response")
+            #print(response)
+        time.sleep(pause)
 
 
 if __name__ == '__main__':
