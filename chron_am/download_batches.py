@@ -107,8 +107,8 @@ def main():
                 
                 if not os.path.exists(destination_file):
                     print("** ERROR **: File not downloaded:", destination_file)
-                    print("Sleeping for 60 seconds")
-                    time.sleep(60)
+                    print("Sleeping for 180 seconds")
+                    time.sleep(180)
 
                 elif os.path.getsize(destination_file) == 0:
                     raise RuntimeError("** ERROR **: Empty file:", destination_file)
