@@ -120,7 +120,7 @@ def main():
 
         output = result.stdout
         print(output)
-        checksum = str(output.split()[0])
+        checksum = output.split()[0].decode("utf-8") 
         print(checksum)
 
         if checksum == sha1:
