@@ -30,7 +30,7 @@ def main():
                       help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
-    parser.add_option('--pause', type=int, default=9,
+    parser.add_option('--pause', type=int, default=10,
                       help='Time to wait on error: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
