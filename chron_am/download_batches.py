@@ -57,14 +57,6 @@ def main():
     tar_files_dir = os.path.join(basedir, 'tar_files')
     untarred_dir = os.path.join(basedir, 'untarred')
     indexed_dir = os.path.join(basedir, 'indexed')
-    logfile = os.path.join(basedir, 'log.csv')
-
-    if os.path.exists(logfile):
-        log_df = pd.read_csv(logfile, header=0, index_col=0)
-    else:
-        log_df = pd.DataFrame(columns=['id', 'datetime', 'index', 'filename', 'url', 'action', 'checksum'])
-
-    current_id = len(log_df)
 
     for dir in [basedir, tar_files_dir, untarred_dir, indexed_dir]:
         if not os.path.exists(dir):
@@ -81,8 +73,6 @@ def main():
 
     items = data['ocr']
     print(len(items))
-
-    log_rows = []
 
     if end is None:
         end = len(items)
@@ -104,10 +94,8 @@ def main():
         tarfile = os.path.join(tar_files_dir, filename)
         if date < start_date:
             print("Skipping download of file {:s} from before".format(filename), start_date)
-            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'skipped (date)', None])
         elif os.path.exists(tarfile) and not overwrite:
             print("Skipping download of existing file {:s}".format(filename))
-            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'skipped (exists)', None])
         else:
             command = ['wget', url, '-P', tar_files_dir]
             print("Downloading from", url)
