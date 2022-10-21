@@ -31,10 +31,12 @@ def main():
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
-    parser.add_option('--skip-untar', action="store_true", default=False,
-                      help='Skip untar: default=%default')
-    parser.add_option('--skip-size-check', action="store_true", default=False,
-                      help='Skip checking for file size agreement: default=%default')
+    parser.add_option('--overwrite', action="store_true", default=False,
+                      help='Overwrite tar files: default=%default')
+    #parser.add_option('--skip-untar', action="store_true", default=False,
+    #                  help='Skip untar: default=%default')
+    #parser.add_option('--skip-size-check', action="store_true", default=False,
+    #                  help='Skip checking for file size agreement: default=%default')
 
     (options, args) = parser.parse_args()
 
@@ -44,8 +46,7 @@ def main():
     start = options.start
     end = options.end
     overwrite_index = options.overwrite_index
-    skip_untar = options.skip_untar
-    skip_size_check = options.skip_size_check
+    overwrite = options.overwrite
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -101,7 +102,10 @@ def main():
         logfile = tarfile + '.log'
         if date < start_date:
             print("Skipping download of file {:s} from before".format(filename), start_date)
-            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'skipped', None])
+            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'skipped (date)', None])
+        elif os.path.exists(tarfile) and not overwrite:
+            print("Skipping download of existing file {:s}".format(filename))
+            log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'skipped (exists)', None])
         else:
             command = ['wget', url, '-P', tar_files_dir]
             print("Downloading from", url)
@@ -113,14 +117,13 @@ def main():
             tar_file = os.path.join(tar_files_dir, filename)
             command = ['sha1sum', tar_file, '>', tar_file + '.sha1']
             print(' '.join(command))
-            run(command)
+            result = run(command, capture_output=True)
 
-            # compare checksums
-            print("Comparing checksum")
-            with open(tar_file + '.sha1') as f:
-                checksum = f.read()
-            checksum = checksum.strip()
-            
+            output = result.stdout
+            print(output)
+            checksum = output.split()[0]
+            print(checksum)
+
             if checksum == sha1:
                 print("Checksum passed")
                 log_rows.append([current_id, str(dt.datetime.now()), index, filename, url, 'downloaded', 'passed'])
