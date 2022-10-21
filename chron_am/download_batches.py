@@ -101,16 +101,16 @@ def main():
         elif os.path.exists(tarfile) and not overwrite:
             print("Skipping download of existing file {:s}".format(filename))
         else:
-            #command = ['wget', url, '-P', tar_files_dir]
-            #print("Downloading from", url)
-            #print(' '.join(command))
-            #output = run(command, capture_output=True)
+            command = ['wget', url, '-P', tar_files_dir]
+            print("Downloading from", url)
+            print(' '.join(command))
+            run(command)
             #print(type(output))
             #print(output)
-            response = download(url, os.path.join(tar_files_dir, filename), total=size)
-            print("Response")
-            print(response)
-            time.sleep(pause)
+            #response = download(url, os.path.join(tar_files_dir, filename), total=size)
+            #print("Response")
+            #print(response)
+            #time.sleep(pause)
 
 
 if __name__ == '__main__':
