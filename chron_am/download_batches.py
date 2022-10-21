@@ -89,9 +89,9 @@ def main():
         year = int(timestamp[:4])
         month = int(timestamp[5:7])
         day = int(timestamp[8:10])
-        sha1 = item['sha1']
+        #sha1 = item['sha1']
         size = int(item['size'])
-        print(i+start, url, filename, size)
+        print(index, url, filename, size)
         date = dt.date(year=year, month=month, day=day)
         #if sha1_dir is not None and os.path.exists(os.path.join(sha1_dir, filename + '.sha1')):
         #    print("Skipping", url, "with existing sha1")
@@ -104,13 +104,13 @@ def main():
             command = ['wget', url, '-P', tar_files_dir]
             print("Downloading from", url)
             print(' '.join(command))
-            run(command)
-            #print(type(output))
-            #print(output)
-            #response = download(url, os.path.join(tar_files_dir, filename), total=size)
-            #print("Response")
-            #print(response)
-            #time.sleep(pause)
+            run(command)            
+            
+            destination_file = os.path.join(tar_files_dir, filename)
+            if not os.path.exists(destination_file):
+                raise RuntimeError("File not downloaded:", destination_file)
+        
+            time.sleep(pause)        
 
 
 if __name__ == '__main__':
