@@ -30,8 +30,8 @@ def main():
                       help='Last file: default=%default')
     #parser.add_option('--sha1-dir', type=str, default=None,
     #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
-    parser.add_option('--pause', type=int, default=5,
-                      help='Pause between files in seconds: default=%default')
+    parser.add_option('--pause', type=int, default=30,
+                      help='Time to wait on error: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
     parser.add_option('--overwrite', action="store_true", default=False,
@@ -97,21 +97,26 @@ def main():
         elif os.path.exists(tarfile) and not overwrite:
             print("Skipping download of existing file {:s}".format(filename))
         else:
-            command = ['wget', url, '-P', tar_files_dir]
-            print("Downloading from", url)
-            print(' '.join(command))
-            run(command)            
-            
+            attempts = 0
             destination_file = os.path.join(tar_files_dir, filename)
-            if not os.path.exists(destination_file):
-                print("** ERROR **: File not downloaded:", destination_file)
-                time.sleep(20)
+            while not os.path.exist(destination_file):
+                command = ['wget', url, '-P', tar_files_dir]
+                print("Downloading from", url, "(attempt {:d}".format(attempts))
+                print(' '.join(command))
+                run(command)            
+                
+                if not os.path.exists(destination_file):
+                    print("** ERROR **: File not downloaded:", destination_file)
+                    print("Sleeping for {:d} seconds".format(pause))
+                    time.sleep(pause)
 
-            elif os.path.getsize(destination_file) == 0:
-                print("** ERROR **: Empty file:", destination_file)
-                time.sleep(20)
+                elif os.path.getsize(destination_file) == 0:
+                    raise RuntimeError("** ERROR **: Empty file:", destination_file)
+                
+                attempts += 1
 
-            time.sleep(pause)        
+                if attempts >= 10:
+                    raise RuntimeError("Failed 10 times on", url)
 
 
 if __name__ == '__main__':
