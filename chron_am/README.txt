@@ -1,6 +1,12 @@
 
-
 Scripts to download newspaper data for Chronicling America from Library of Congress
+
+
+Updated process:
+
+1. download_batches.py to download all the tar files
+2. do_checksums.py to check which downloads are okay
+
 
 use download_and_process_ocr.py to download each source, extract text, and put into json
 
