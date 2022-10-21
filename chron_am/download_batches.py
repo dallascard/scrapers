@@ -107,12 +107,12 @@ def main():
             output = run(command, capture_output=True)
             print(type(output))
             print(output)
-            
+
 
             #response = download(url, os.path.join(tar_files_dir, filename))
             #print("Response")
             #print(response)
-        time.sleep(pause)
+            time.sleep(pause)
 
 
 if __name__ == '__main__':
