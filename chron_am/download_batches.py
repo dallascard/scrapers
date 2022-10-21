@@ -59,12 +59,8 @@ def main():
     start_date = dt.date(year=year, month=month, day=day)
 
     tar_files_dir = os.path.join(basedir, 'tar_files')
-    untarred_dir = os.path.join(basedir, 'untarred')
-    indexed_dir = os.path.join(basedir, 'indexed')
-
-    for dir in [basedir, tar_files_dir, untarred_dir, indexed_dir]:
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+    if not os.path.exists(tar_files_dir):
+        os.makedirs(tar_files_dir)
 
     target = 'https://chroniclingamerica.loc.gov/ocr.json'
 
@@ -108,8 +104,13 @@ def main():
             
             destination_file = os.path.join(tar_files_dir, filename)
             if not os.path.exists(destination_file):
-                raise RuntimeError("File not downloaded:", destination_file)
-        
+                print("** ERROR **: File not downloaded:", destination_file)
+                time.sleep(20)
+
+            elif os.path.getsize(destination_file) == 0:
+                print("** ERROR **: Empty file:", destination_file)
+                time.sleep(20)
+
             time.sleep(pause)        
 
 
