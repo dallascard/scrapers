@@ -11,6 +11,7 @@ from subprocess import run
 from tqdm import tqdm
 import pandas as pd
 from common.requests_get import download, get
+from chron_am.skiplist import missing_urls
 
 
 # Download the index file for OCR batches, and write a bash script to download using wget
@@ -96,6 +97,8 @@ def main():
             print("Skipping download of file {:s} from before".format(filename), start_date)
         elif os.path.exists(tarfile) and not overwrite:
             print("Skipping download of existing file {:s}".format(filename))
+        elif url in missing_urls:
+            print("Skipping URL on skiplist {:s}".format(url))
         else:
             attempts = 0
             destination_file = os.path.join(tar_files_dir, filename)
