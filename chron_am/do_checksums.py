@@ -19,8 +19,8 @@ def main():
     parser = OptionParser(usage=usage)
     parser.add_option('--basedir', type=str, default='/u/scr/dcard/data/chron_am',
                       help='Base directory: default=%default')
-    #parser.add_option('--logfile', type=str, default='errors.txt',
-    #                  help='Logfile location (in basedir): default=%default')
+    parser.add_option('--max-files', type=int, default=None,
+                      help='Max files to proecss (for debugging): default=%default')
     #parser.add_option('--start-date', type=str, default='17000101',
     #                  help='Start downloading from this date (for getting updates): default=%default')
     #parser.add_option('--start', type=int, default=0,
@@ -41,6 +41,8 @@ def main():
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
+    max_files = options.max_files
+
     tar_files_dir = os.path.join(basedir, 'tar_files')
     checksum_dir = os.path.join(basedir, 'checksums')
     if not os.path.exists(checksum_dir):
@@ -60,17 +62,21 @@ def main():
     checksums = []
     mismatches = []
 
-    for item in tqdm(items):
+    if max_files is None:
+        max_files = len(items)
+
+    for i, item in enumerate(items[:max_files]):
+        print("({:d} / {:d})")
         url = item['url']
         filename = item['name']
         sha1 = item['sha1']
+        print(filename)
 
         urls.append(url)
         filenames.append(filename)
         sha1s.append(sha1)
 
         # compute checksum
-        print("Computing checksum")
         tar_file = os.path.join(tar_files_dir, filename)
         
         if not os.path.exists(tar_file):
@@ -81,8 +87,8 @@ def main():
         else:
             missing.append(0)
             
-            outfile = os.path.join(checksum_dir, filename + '.sha1')
-            command = ['sha1sum', tar_file, '>', outfile]
+            #outfile = os.path.join(checksum_dir, filename + '.sha1')
+            command = ['sha1sum', tar_file]
             print(' '.join(command))
             result = run(command, capture_output=True)
 
@@ -106,6 +112,7 @@ def main():
     df['sha1'] = sha1s
     df['checksum'] = checksums
     df['mismatch'] = mismatches
+    df.to_csv(os.path.join(checksum_dir, 'checksums.csv'))
 
 
 if __name__ == '__main__':
