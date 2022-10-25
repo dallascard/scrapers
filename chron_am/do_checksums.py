@@ -66,7 +66,7 @@ def main():
         max_files = len(items)
 
     for i, item in enumerate(items[:max_files]):
-        print("({:d} / {:d})")
+        print("({:d} / {:d})".format(i, max_files))
         url = item['url']
         filename = item['name']
         sha1 = item['sha1']
