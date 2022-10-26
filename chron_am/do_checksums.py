@@ -111,6 +111,9 @@ def main():
     df['mismatch'] = mismatches
     df.to_csv(os.path.join(checksum_dir, 'checksums.csv'))
 
+    subset = df[df['mismatch'] == 1]
+    print(subset)
+
 
 if __name__ == '__main__':
     main()
