@@ -103,6 +103,10 @@ def main():
         else:
             attempts = 0
             destination_file = os.path.join(tar_files_dir, filename)
+            
+            if overwrite and os.path.exists(destination_file):
+                os.remove(destination_file)
+            
             while not os.path.exists(destination_file):
                 command = ['wget', url, '-P', tar_files_dir]
                 print("Downloading from", url, "(attempt {:d}".format(attempts))
