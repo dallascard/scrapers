@@ -21,37 +21,31 @@ def main():
     parser = OptionParser(usage=usage)
     parser.add_option('--basedir', type=str, default='/u/scr/dcard/data/chron_am',
                       help='Base directory: default=%default')
-    #parser.add_option('--logfile', type=str, default='errors.txt',
-    #                  help='Logfile location (in basedir): default=%default')
     parser.add_option('--start-date', type=str, default='17000101',
                       help='Start downloading from this date (for getting updates): default=%default')
     parser.add_option('--start', type=int, default=0,
                       help='First file: default=%default')
     parser.add_option('--end', type=int, default=None,
                       help='Last file: default=%default')
-    #parser.add_option('--sha1-dir', type=str, default=None,
-    #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
     parser.add_option('--pause', type=int, default=10,
                       help='Time to wait on error: default=%default')
     parser.add_option('--overwrite-index', action="store_true", default=False,
                       help='Overwrite index of json objects: default=%default')
     parser.add_option('--overwrite', action="store_true", default=False,
                       help='Overwrite tar files: default=%default')
-    #parser.add_option('--skip-untar', action="store_true", default=False,
-    #                  help='Skip untar: default=%default')
-    #parser.add_option('--skip-size-check', action="store_true", default=False,
-    #                  help='Skip checking for file size agreement: default=%default')
+    parser.add_option('--checksum-file', type=str, default=None,
+                      help='Optiona: checksum file from do_checksums.py (for second pass): default=%default')
 
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
-    #error_log = os.path.join(basedir, options.logfile)
     start_date = options.start_date
     start = options.start
     end = options.end
     pause = options.pause
     overwrite_index = options.overwrite_index
     overwrite = options.overwrite
+    checksum_file = options.checksum_file
 
     year = int(start_date[:4])
     month = int(start_date[4:6])
@@ -78,6 +72,11 @@ def main():
     if end is None:
         end = len(items)
 
+    if checksum_file is not None:
+        checksum_df = pd.read_csv(checksum_file, header=0, index_col=0)
+        subset_df = checksum_df[checksum_df['mismatch'] == 1]
+        files_to_check = subset_df['filename'].values
+
     for i, item in enumerate(items[start:end]):
         index = start+i
         url = item['url']
@@ -99,6 +98,8 @@ def main():
             print("Skipping download of existing file {:s}".format(filename))
         elif url in missing_urls:
             print("Skipping URL on skiplist {:s}".format(url))
+        elif checksum_file is not None and filename not in files_to_check:
+            print("Skipping file that passed checksum {:s}".format(url))
         else:
             attempts = 0
             destination_file = os.path.join(tar_files_dir, filename)

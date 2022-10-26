@@ -21,27 +21,14 @@ def main():
                       help='Base directory: default=%default')
     parser.add_option('--max-files', type=int, default=None,
                       help='Max files to proecss (for debugging): default=%default')
-    #parser.add_option('--start-date', type=str, default='17000101',
-    #                  help='Start downloading from this date (for getting updates): default=%default')
-    #parser.add_option('--start', type=int, default=0,
-    #                  help='First file: default=%default')
-    #parser.add_option('--end', type=int, default=1,
-    #                  help='Last file: default=%default')
-    #parser.add_option('--sha1-dir', type=str, default=None,
-    #                  help='If given, skip files with existing sha1 files in this dir: default=%default')
-    #parser.add_option('--overwrite-index', action="store_true", default=False,
-    #                  help='Overwrite index of json objects: default=%default')
-    #parser.add_option('--overwrite', action="store_true", default=False,
-    #                  help='Overwrite tar files: default=%default')
-    #parser.add_option('--skip-untar', action="store_true", default=False,
-    #                  help='Skip untar: default=%default')
-    #parser.add_option('--skip-size-check', action="store_true", default=False,
-    #                  help='Skip checking for file size agreement: default=%default')
+    parser.add_option('--checksum-file', type=str, default=None,
+                      help='Optiona: checksum file from do_checksums.py (for second pass): default=%default')
 
     (options, args) = parser.parse_args()
 
     basedir = options.basedir
     max_files = options.max_files
+    checksum_file = options.checksum_file
 
     tar_files_dir = os.path.join(basedir, 'tar_files')
     checksum_dir = os.path.join(basedir, 'checksums')
@@ -65,6 +52,11 @@ def main():
     if max_files is None:
         max_files = len(items)
 
+    if checksum_file is not None:
+        checksum_df = pd.read_csv(checksum_file, header=0, index_col=0)
+        subset_df = checksum_df[checksum_df['mismatch'] == 1]
+        files_to_check = subset_df['filename'].values
+
     for i, item in enumerate(items[:max_files]):
         print("({:d} / {:d})".format(i, max_files))
         url = item['url']
@@ -84,6 +76,8 @@ def main():
             missing.append(1)
             checksums.append('')
             mismatches.append('')
+        elif checksum_file is not None and filename not in files_to_check:
+            print("Skipping file that passed checksum {:s}".format(url))
         else:
             missing.append(0)
             
