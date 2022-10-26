@@ -78,6 +78,9 @@ def main():
             mismatches.append('')
         elif checksum_file is not None and filename not in files_to_check:
             print("Skipping file that passed checksum {:s}".format(url))
+            missing.append(0)
+            checksums.append(sha1)
+            mismatches.append(0)
         else:
             missing.append(0)
             
