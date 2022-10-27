@@ -1,4 +1,5 @@
 import os
+import gzip
 import json
 import shutil
 from glob import glob
@@ -71,15 +72,16 @@ def main():
             
             outlines.append({'sn': sn, 'year': int(year), 'month': int(month), 'day': int(day), 'ed': edition, 'seq': seq, 'text': text})
 
-        outfile = os.path.join(extracted_dir, filename + '.jsonlist')
-        print("Saving {:d} files to {:s}".format(len(outlines), outfile))
-        with open(outfile, 'w') as f:
-            for line in outlines:
-                f.write(json.dumps(line) + '\n')
-
         to_delete = sorted(glob(os.path.join(untarred_dir, '*')))
         for subdir in to_delete:
             print("Deleting", subdir)
+            shutil.rmtree(subdir)
+
+        outfile = os.path.join(extracted_dir, filename + '.jsonlist.gz')
+        print("Saving {:d} files to {:s}".format(len(outlines), outfile))
+        with gzip.open(outfile, 'wt') as f:
+            for line in outlines:
+                f.write(json.dumps(line) + '\n')
 
 
 if __name__ == '__main__':
