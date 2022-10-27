@@ -47,7 +47,7 @@ def main():
 
         filename = os.path.basename(infile)
 
-        command = ['tar', '-xvf', filename, '-C', untarred_dir]
+        command = ['tar', '-xvf', infile, '-C', untarred_dir]
         print(' '.join(command))
         run(command)
 
@@ -58,6 +58,7 @@ def main():
         for text_file in text_files:            
             print(text_file)
             parts = os.path.split(text_file)
+            print(parts)
             seq = parts[-2].split('-')[1]
             edition = parts[-3].split('-')[1]
             day = parts[-4]
