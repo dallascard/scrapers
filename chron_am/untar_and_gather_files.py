@@ -31,11 +31,11 @@ def main():
     tar_dir = os.path.join(basedir, 'tar_files')
     untarred_dir = os.path.join(basedir, 'untarred')
     if not os.path.exists(untarred_dir):
-        os.makedir(untarred_dir)
+        os.makedirs(untarred_dir)
 
     extracted_dir = os.path.join(basedir, 'extracted')
     if not os.path.exists(extracted_dir):
-        os.makedir(extracted_dir)
+        os.makedirs(extracted_dir)
 
 
     files = sorted(glob(os.path.join(tar_dir, '*.bz2')))
