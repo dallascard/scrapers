@@ -37,7 +37,7 @@ def main():
     if not os.path.exists(untarred_dir):
         os.makedirs(untarred_dir)
 
-    extracted_dir = os.path.join(basedir, 'extracted')
+    extracted_dir = os.path.join(basedir, 'text_only')
     if not os.path.exists(extracted_dir):
         os.makedirs(extracted_dir)
 
