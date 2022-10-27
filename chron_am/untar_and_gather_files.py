@@ -30,11 +30,11 @@ def main():
 
     tar_dir = os.path.join(basedir, 'tar_files')
     untarred_dir = os.path.join(basedir, 'untarred')
-    if not os.path.exist(untarred_dir):
+    if not os.path.exists(untarred_dir):
         os.makedir(untarred_dir)
 
     extracted_dir = os.path.join(basedir, 'extracted')
-    if not os.path.exist(extracted_dir):
+    if not os.path.exists(extracted_dir):
         os.makedir(extracted_dir)
 
 
