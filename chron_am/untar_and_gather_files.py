@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 from glob import glob
+from pathlib import Path
 from optparse import OptionParser
 from collections import defaultdict, Counter
 from subprocess import run
@@ -47,7 +48,7 @@ def main():
 
         filename = os.path.basename(infile)
 
-        command = ['tar', '-xvf', infile, '-C', untarred_dir]
+        command = ['tar', '-xf', infile, '-C', untarred_dir]
         print(' '.join(command))
         run(command)
 
@@ -57,7 +58,7 @@ def main():
         
         for text_file in text_files:            
             print(text_file)
-            parts = os.path.split(text_file)
+            parts = Path(text_file).parts
             print(parts)
             seq = parts[-2].split('-')[1]
             edition = parts[-3].split('-')[1]
