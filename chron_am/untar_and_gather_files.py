@@ -8,8 +8,10 @@ from optparse import OptionParser
 from collections import defaultdict, Counter
 from subprocess import run
 
+from tqdm import tqdm
 
-# Make a bash script to untar only the .txt files from downloaded tar.bz2 files
+
+# Untar the files, gather the information from the text files, then delete the intermediate files
 
 
 def main():
@@ -44,9 +46,7 @@ def main():
     if end is None:
         end = len(files)
 
-    for infile in files[start:end]:
-        outlines = []
-
+    for infile in files[start:end]:        
         filename = os.path.basename(infile)
 
         command = ['tar', '-xf', infile, '-C', untarred_dir]
@@ -56,11 +56,11 @@ def main():
         # [sn, year, month, day, edition, seq, ocr.txt]
         text_files = sorted(glob(os.path.join(untarred_dir, '*', '*', '*', '*', '*', '*', 'ocr.txt')))
         print(len(text_files))
-        
-        for text_file in text_files:            
-            print(text_file)
+
+        outlines = []
+
+        for text_file in tqdm(text_files):            
             parts = Path(text_file).parts
-            print(parts)
             seq = parts[-2].split('-')[1]
             edition = parts[-3].split('-')[1]
             day = parts[-4]
@@ -73,15 +73,17 @@ def main():
             outlines.append({'sn': sn, 'year': int(year), 'month': int(month), 'day': int(day), 'ed': edition, 'seq': seq, 'text': text})
 
         to_delete = sorted(glob(os.path.join(untarred_dir, '*')))
-        for subdir in to_delete:
-            print("Deleting", subdir)
-            shutil.rmtree(subdir)
+        if len(to_delete) > 0:
+            for subdir in to_delete:
+                print("Deleting", subdir)
+                shutil.rmtree(subdir)
 
-        outfile = os.path.join(extracted_dir, filename + '.jsonlist.gz')
-        print("Saving {:d} files to {:s}".format(len(outlines), outfile))
-        with gzip.open(outfile, 'wt') as f:
-            for line in outlines:
-                f.write(json.dumps(line) + '\n')
+        if len(outlines) > 0:
+            outfile = os.path.join(extracted_dir, filename + '.jsonlist.gz')
+            print("Saving {:d} files to {:s}".format(len(outlines), outfile))
+            with gzip.open(outfile, 'wt') as f:
+                for line in outlines:
+                    f.write(json.dumps(line) + '\n')
 
 
 if __name__ == '__main__':
