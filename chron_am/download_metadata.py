@@ -32,8 +32,6 @@ def main():
     pause = options.pause
     overwrite = options.overwrite
 
-    basedir = args[0]
-
     text_dir = os.path.join(basedir, 'text_only')
     metadata_dir = os.path.join(basedir, 'metadata')    
     if not os.path.exists(metadata_dir):
