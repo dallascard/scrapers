@@ -45,7 +45,7 @@ def main():
         with gzip.open(infile, 'rt') as f:
             lines = f.readlines()
         for line in lines:
-            line = json.loads(f)
+            line = json.loads(line)
             lccn = line['sn']
             lccn_counter[lccn] += 1               
     print(len(lccn_counter), 'lccns')
