@@ -32,24 +32,16 @@ def main():
     basedir = options.basedir
     pause = options.pause
     overwrite = options.overwrite
-
-    text_dir = os.path.join(basedir, 'text_only')
+    
     metadata_dir = os.path.join(basedir, 'metadata')    
     if not os.path.exists(metadata_dir):
         os.makedirs(metadata_dir)
 
     lccn_counter = Counter()
 
-    files = sorted(glob(os.path.join(text_dir, '*.gz')))
-
-    for infile in tqdm(files):
-        with gzip.open(infile, 'rt') as f:
-            lines = f.readlines()
-        for line in lines:
-            line = json.loads(line)
-            lccn = line['sn']
-            lccn_counter[lccn] += 1               
-    print(len(lccn_counter), 'lccns')
+    lccn_file = os.path.join(basedir, 'lccns.json')
+    with open(lccn_file, 'r') as f:
+        lccn_counter = Counter(json.load(f))
 
     for lccn, count in lccn_counter.most_common():
         print(lccn, count)
