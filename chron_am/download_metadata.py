@@ -7,6 +7,7 @@ from subprocess import run
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
+from tqdm import tqdm
 from common.requests_get import download
 
 
@@ -41,7 +42,7 @@ def main():
 
     files = sorted(glob(os.path.join(text_dir, '*.gz')))
 
-    for infile in files:
+    for infile in tqdm(files):
         with gzip.open(infile, 'rt') as f:
             lines = f.readlines()
         for line in lines:
