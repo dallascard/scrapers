@@ -16,6 +16,9 @@ from chron_am.skiplist import missing_urls
 
 # Download the index file for OCR batches, and write a bash script to download using wget
 
+# Warning: The full set of files from LoC is very large! (2TB compressed)
+
+
 def main():
     usage = "%prog"
     parser = OptionParser(usage=usage)

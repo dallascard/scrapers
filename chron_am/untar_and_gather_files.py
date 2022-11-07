@@ -41,12 +41,19 @@ def main():
     if not os.path.exists(extracted_dir):
         os.makedirs(extracted_dir)
 
+    # Clear out untarred dir
+    to_delete = sorted(glob(os.path.join(untarred_dir, '*')))
+    if len(to_delete) > 0:
+        for subdir in to_delete:
+            print("Deleting", subdir)
+            shutil.rmtree(subdir)
 
     files = sorted(glob(os.path.join(tar_dir, '*.bz2')))
     if end is None:
         end = len(files)
 
-    for infile in files[start:end]:        
+    for i, infile in enumerate(files[start:end]):
+        print(i + start)
         filename = os.path.basename(infile)
 
         command = ['tar', '-xf', infile, '-C', untarred_dir]

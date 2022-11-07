@@ -1,16 +1,26 @@
 import os
+import gzip
 import json
+import time
+from glob import glob
+from subprocess import run
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
 from common.requests_get import download
 
 
-# This script should download the index files for each batch of OCR files
+# This script should download the metadata for each newspaper
 
 def main():
     usage = "%prog basedir"
     parser = OptionParser(usage=usage)
+    parser.add_option('--basedir', type=str, default='/u/scr/dcard/data/chron_am',
+                      help='Base directory: default=%default')
+    parser.add_option('--pause', type=int, default=10,
+                      help='Time to wait on error: default=%default')
+    parser.add_option('--overwrite', action="store_true", default=False,
+                      help='Overwrite tar files: default=%default')
     #parser.add_option('--issue', type=str, default='immigration',
     #                  help='Issue: default=%default')
     #parser.add_option('--by-issue', action="store_true", default=False,
@@ -18,74 +28,63 @@ def main():
 
     (options, args) = parser.parse_args()
 
+    basedir = options.basedir
+    pause = options.pause
+    overwrite = options.overwrite
+
     basedir = args[0]
 
-    group_dir = os.path.join(basedir, 'grouped_batches')
-    if not os.path.exists(group_dir):
-        os.makedirs(group_dir)
-
-    batch_dir = os.path.join(basedir, 'batches')
-    if not os.path.exists(batch_dir):
-        os.makedirs(batch_dir)
-
-    lccn_dir = os.path.join(basedir, 'lccns')
-    if not os.path.exists(lccn_dir):
-        os.makedirs(lccn_dir)
+    text_dir = os.path.join(basedir, 'text_only')
+    metadata_dir = os.path.join(basedir, 'metadata')    
+    if not os.path.exists(metadata_dir):
+        os.makedirs(metadata_dir)
 
     lccn_counter = Counter()
 
-    target = 1
-    done = False
-    while done is False:
-        print(target)
-        # Download this target index file
-        url = 'https://chroniclingamerica.loc.gov/batches/' + str(target) + '.json'
-        outfile = os.path.join(group_dir, str(target) + '.json')
-        if not os.path.exists(outfile):
-            download(url, outfile)
+    files = sorted(glob(os.path.join(text_dir, '*.gz')))
 
-        # open it up
-        with open(outfile) as f:
-            data = json.load(f)
+    for infile in files:
+        with gzip.open(infile, 'rt') as f:
+            lines = f.readlines()
+        for line in lines:
+            line = json.loads(f)
+            lccn = line['sn']
+            lccn_counter[lccn] += 1               
+    print(len(lccn_counter), 'lccns')
 
-        # download the metadata for each batch
-        for batch in data['batches']:
-            url = batch['url']
-            filename = url.split('/')[-1]
-            print(filename)
-            outfile = os.path.join(batch_dir, filename)
-            if not os.path.exists(outfile):
-                download(url, outfile)
-
-            # download the metadata associated with each lccn
-            with open(outfile) as f:
-                batch_metadata = json.load(f)
-
-            lccns = batch_metadata['lccns']
-            for lccn in lccns:
-                lccn_counter[lccn] += 1
-                url = 'https://chroniclingamerica.loc.gov/lccn/' + str(lccn) + '.json'
-                filename = lccn + '.json'
-                outfile = os.path.join(lccn_dir, filename)
-                if os.path.exists(outfile):
-                    print("Skipping existing lccn:", lccn)
-                else:
-                    download(url, outfile)
-
-        # get the next group of batches
-        if 'next' in data and data['next'] is not None:
-            next_link = data['next']
-            print(next_link)
-            filename = next_link.split('/')[-1]
-            next_target = filename.split('.')[0]
-            assert int(next_target) == target + 1
-            target = int(next_target)
-        else:
-            done = True
-
-    for lccn, count in lccn_counter.most_common(n=10):
+    for lccn, count in lccn_counter.most_common():
         print(lccn, count)
+        url = 'https://chroniclingamerica.loc.gov/lccn/' + str(lccn) + '.json'
+        filename = lccn + '.json'
+        outfile = os.path.join(metadata_dir, filename)
+        download(url, outfile)
 
+        attempts = 0
+        
+        if overwrite and os.path.exists(outfile):
+            os.remove(outfile)
+        
+        while not os.path.exists(outfile):
+            command = ['wget', url, '-P', outfile]
+            print("Downloading from", url, "(attempt {:d}".format(attempts))
+            print(' '.join(command))
+            run(command)            
+            
+            if not os.path.exists(outfile):
+                print("** ERROR **: File not downloaded:", outfile)
+                print("Sleeping for 180 seconds")
+                time.sleep(180)
+
+            elif os.path.getsize(outfile) == 0:
+                raise RuntimeError("** ERROR **: Empty file:", outfile)
+            
+            attempts += 1
+
+            if attempts >= 10:
+                raise RuntimeError("Failed 10 times on", url)
+    
+        print("Pausing for {:d} seconds".format(pause))
+        time.sleep(pause)
 
 if __name__ == '__main__':
     main()
