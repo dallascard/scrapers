@@ -37,14 +37,13 @@ def main():
     if not os.path.exists(metadata_dir):
         os.makedirs(metadata_dir)
 
-    lccn_counter = Counter()
-
     lccn_file = os.path.join(basedir, 'lccns.json')
     with open(lccn_file, 'r') as f:
         lccn_counter = Counter(json.load(f))
 
-    for lccn, count in lccn_counter.most_common():
-        print(lccn, count)
+    for lccn_i, lccn in enumerate(lccn_counter):
+        count = lccn_counter[lccn]
+        print(lccn, count, '({:d}/{:d})'.format(lccn_i, len(lccn_counter)))
         url = 'https://chroniclingamerica.loc.gov/lccn/' + str(lccn) + '.json'
         filename = lccn + '.json'
         outfile = os.path.join(metadata_dir, filename)
