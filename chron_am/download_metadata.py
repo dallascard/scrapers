@@ -2,6 +2,7 @@ import os
 import gzip
 import json
 import time
+import shutil
 from glob import glob
 from subprocess import run
 from optparse import OptionParser
@@ -47,18 +48,18 @@ def main():
         url = 'https://chroniclingamerica.loc.gov/lccn/' + str(lccn) + '.json'
         filename = lccn + '.json'
         outfile = os.path.join(metadata_dir, filename)
-        download(url, outfile)
 
         attempts = 0
         
         if overwrite and os.path.exists(outfile):
-            os.remove(outfile)
+            shutil.rmtree(outfile)
         
         while not os.path.exists(outfile):
-            command = ['wget', url, '-P', outfile]
-            print("Downloading from", url, "(attempt {:d}".format(attempts))
-            print(' '.join(command))
-            run(command)            
+            download(url, outfile)
+            #command = ['wget', url, '-P', outfile]
+            #print("Downloading from", url, "(attempt {:d}".format(attempts))
+            #print(' '.join(command))
+            #run(command)            
             
             if not os.path.exists(outfile):
                 print("** ERROR **: File not downloaded:", outfile)
