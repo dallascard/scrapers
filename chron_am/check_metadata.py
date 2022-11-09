@@ -60,7 +60,7 @@ def main():
         issues = metadata['issues']
         for issue in issues:
             url = issue['url']
-            parts = url.spit('/')
+            parts = url.split('/')
             date = parts[-2]
             edition = parts[-1]
             # pull out the edition number
