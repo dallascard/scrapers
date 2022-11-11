@@ -7,8 +7,11 @@ from subprocess import run
 from optparse import OptionParser
 from collections import defaultdict, Counter
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
+
+from common.requests_get import download
 
 
 # This script should compare the metadata against the downloaded articles
@@ -29,10 +32,14 @@ def main():
 
     text_dir = os.path.join(basedir, 'text_only')
     metadata_dir = os.path.join(basedir, 'metadata')
+    seqs_dir = os.path.join(basedir, 'seq_counts')
+    if not os.path.exists(seqs_dir):
+        os.makedirs(seqs_dir)
     
     files = sorted(glob(os.path.join(text_dir, '*.gz')))
 
     articles_by_lccn = defaultdict(set)
+    seq_counts = defaultdict(Counter)
 
     print("Reading articlse")
     for infile in tqdm(files):
@@ -48,9 +55,12 @@ def main():
             seq = line['seq']
             key = str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2) + '-' + str(ed)
             articles_by_lccn[lccn].add(key)
+            seq_counts[lccn][key] += 1
 
     metadata_by_lccn = defaultdict(set)
     
+    urls_by_key = defaultdict(list)
+
     print("Reading metadata")
     files = sorted(glob(os.path.join(metadata_dir, '*.json')))
     for infile in tqdm(files):
@@ -67,6 +77,13 @@ def main():
             ed = edition[3:-5]
             key = date + '-' + ed
             metadata_by_lccn[lccn].add(key)
+            urls_by_key[lccn].append(url)
+
+    for lccn, urls in urls_by_key.items():
+        print(lccn, urls)
+        random_url = np.random.choice(urls, size=1)[0]
+        outfile = os.path.join(seqs_dir, random_url)
+        download(url, outfile)
 
     combined_lccns = sorted(set(articles_by_lccn).union(metadata_by_lccn))
     
