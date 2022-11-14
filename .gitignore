@@ -112,3 +112,7 @@ notebooks
 
 # api keys
 api_keys
+
+.DS_Store
+*/.DS_Store
+

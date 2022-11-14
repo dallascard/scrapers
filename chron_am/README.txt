@@ -9,6 +9,7 @@ Updated process:
 3. untar_and_gather_files.py: untar each file, pull out the text files, and clean up
 4. collect_lccns.py: extract lccns from text files
 5. download_metadata.py: download associated metadata
+6. download_sequence_info.py: use the metadata files to download the sequence info
 
 
 use download_and_process_ocr.py to download each source, extract text, and put into json
