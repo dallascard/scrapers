@@ -80,9 +80,12 @@ def main():
             urls_by_key[lccn].append(url)
 
     for lccn, urls in urls_by_key.items():
-        print(lccn, urls)
+        print(lccn, len(urls))
         random_url = np.random.choice(urls, size=1)[0]
-        outfile = os.path.join(seqs_dir, random_url)
+        parts = random_url.split('/')
+        fulldate = parts[-2]
+        ed = parts[-1]
+        outfile = os.path.join(seqs_dir, lccn + '_' + fulldate + '_' + ed)
         download(url, outfile)
 
     combined_lccns = sorted(set(articles_by_lccn).union(metadata_by_lccn))
