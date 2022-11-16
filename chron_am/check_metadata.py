@@ -86,7 +86,7 @@ def main():
         fulldate = parts[-2]
         ed = parts[-1]
         outfile = os.path.join(seqs_dir, lccn + '_' + fulldate + '_' + ed)
-        download(url, outfile)
+        download(random_url, outfile)
 
     combined_lccns = sorted(set(articles_by_lccn).union(metadata_by_lccn))
     
