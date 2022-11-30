@@ -51,7 +51,8 @@ def main():
             ed = line['ed']
             seq = line['seq']
             #key = str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2) + '-' + str(ed)
-            date = datetime.date(year, month, day)
+            #date = datetime.date(year, month, day)
+            date = str(year).zfill(4) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2)
             seq_count_by_date[lccn][date] += 1
             text = line['text']            
             tokens = text.split()
