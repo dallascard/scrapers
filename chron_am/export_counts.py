@@ -35,29 +35,6 @@ def main():
     
     files = sorted(glob(os.path.join(text_dir, '*.gz')))
 
-    seq_count_by_date = defaultdict(Counter)
-    word_count_by_date = defaultdict(Counter)
-
-    print("Reading articlse")
-    for infile in tqdm(files):
-        with gzip.open(infile, 'rt') as f:
-            lines = f.readlines()
-        for line in lines:
-            line = json.loads(line)
-            lccn = line['sn']
-            year = line['year']
-            month = line['month']
-            day = line['day']
-            ed = line['ed']
-            seq = line['seq']
-            #key = str(year) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2) + '-' + str(ed)
-            #date = datetime.date(year, month, day)
-            date = str(year).zfill(4) + '-' + str(month).zfill(2) + '-' + str(day).zfill(2)
-            seq_count_by_date[lccn][date] += 1
-            text = line['text']            
-            tokens = text.split()
-            word_count_by_date[lccn][date] += len(tokens)
-
     papers_by_lccn = defaultdict(set)
 
     print("Reading metadata")
@@ -69,13 +46,45 @@ def main():
         title = metadata['name']
         papers_by_lccn[lccn].add(title)
 
+    # make sure there is at most one paper name per lccn
     for lccn, papers in papers_by_lccn.items():
         if len(papers) > 1:
             print(lccn, papers)
 
-    outfile = os.path.join(basedir, 'article_counts_by_date.json')
+    # assuming the above is correct convert the sets to individual titles
+    papers_by_lccn = {lccn: sorted(titles)[0] for lccn, titles in papers_by_lccn.items()}
+
+    page_counts_by_year = defaultdict(Counter)
+    word_counts_by_year = defaultdict(Counter)
+
+    print("Reading articles")
+    for infile in tqdm(files):
+        with gzip.open(infile, 'rt') as f:
+            lines = f.readlines()
+        for line in lines:
+            line = json.loads(line)
+            lccn = line['sn']
+            year = line['year']
+            month = line['month']
+            day = line['day']
+            ed = line['ed']
+            seq = line['seq']
+            if lccn in papers_by_lccn:
+                name = papers_by_lccn[lccn]
+            else:
+                name = lccn
+            page_counts_by_year[name][year] += 1
+            text = line['text']            
+            tokens = text.split()
+            word_counts_by_year[name][year] += len(tokens)
+
+    outfile = os.path.join(basedir, 'page_counts_by_year.json')
     with open(outfile, 'w') as f:
-        json.dump(seq_count_by_date, f)
+        json.dump(page_counts_by_year, f)
+
+    outfile = os.path.join(basedir, 'word_counts_by_year.json')
+    with open(outfile, 'w') as f:
+        json.dump(word_counts_by_year, f)
 
 
 if __name__ == '__main__':
