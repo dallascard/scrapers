@@ -33,8 +33,6 @@ def main():
     text_dir = os.path.join(basedir, 'text_only')
     metadata_dir = os.path.join(basedir, 'metadata')
     
-    files = sorted(glob(os.path.join(text_dir, '*.gz')))
-
     papers_by_lccn = defaultdict(set)
 
     print("Reading metadata")
@@ -56,6 +54,8 @@ def main():
 
     page_counts_by_year = defaultdict(Counter)
     word_counts_by_year = defaultdict(Counter)
+
+    files = sorted(glob(os.path.join(text_dir, '*.gz')))
 
     print("Reading articles")
     for infile in tqdm(files):
