@@ -14,7 +14,7 @@ def main():
     parser = OptionParser(usage=usage)
     parser.add_option('--basedir', type=str, default='/data/dalc/magazines/life/',
                       help='Data directory: default=%default')
-    parser.add_option('--first-date', type=int, default='1936-11-23',
+    parser.add_option('--first-date', type=str, default='1936-11-23',
                       help='First date: default=%default')
     parser.add_option('--first-volume', type=int, default=1,
                       help='First volume: default=%default')
