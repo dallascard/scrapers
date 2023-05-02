@@ -20,8 +20,8 @@ def main():
                       help='First volume: default=%default')
     parser.add_option('--first-number', type=int, default=1,
                       help='First number: default=%default')
-    #parser.add_option('--last-year', type=int, default=2021,
-    #                  help='Last year: default=%default')
+    parser.add_option('--pause', type=int, default=5,
+                      help='Pause between issues: default=%default')
     #parser.add_option('--overwrite', action="store_true", default=False,
     #                  help='Overwrite files: default=%default')
     #parser.add_option('--clear-log', action="store_true", default=False,
@@ -33,6 +33,7 @@ def main():
     first_date = options.first_date
     first_volume = options.first_volume
     first_number = options.first_number
+    pause = options.pause
 
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
@@ -66,6 +67,8 @@ def main():
             number = 1
             current_year = date.year
         
+        time.sleep(pause)
+
 
 def download_file(url, outfile, max_tries=3, logfile=None, overwrite=False):
     tries = 0
