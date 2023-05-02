@@ -69,12 +69,11 @@ def main():
         if date.year > current_year:
             volume += 1
             number = 1
-            current_month = date.month
-            current_year = date.year
         elif date.month == 7 and current_month == 6:
             volume += 1
             number = 1
-            current_month = date.month
+        current_month = date.month
+        current_year = date.year
         
         time.sleep(pause)
 
