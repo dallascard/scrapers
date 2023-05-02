@@ -50,7 +50,7 @@ def main():
     done = False
     while not done:
         date_str = date.strftime('%Y-%m-%d')
-        url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life%20-%20{:s}%20-%20v{:s}%20n{:s}_text.pdf'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
+        url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s} n{:s}_text.pdf'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
 
         outfile = os.path.join(data_dir, '-'.join([date_str, str(volume), str(number)]) + '.pdf')
         success = download_file(url, outfile, max_tries=3, overwrite=True)
