@@ -43,7 +43,10 @@ def main():
     month = int(parts[1])
     day = int(parts[2])
     date = dt.date(year, month, day)
+    
+    current_month = date.month
     current_year = date.year
+
 
     volume = first_volume
     number = first_number
@@ -62,10 +65,16 @@ def main():
         
         number += 1
         date += dt.timedelta(days=7)
+        # Volume number increases in July and January
         if date.year > current_year:
             volume += 1
             number = 1
+            current_month = date.month
             current_year = date.year
+        elif date.month == 7 and current_month == 6:
+            volume += 1
+            number = 1
+            current_month = date.month
         
         time.sleep(pause)
 
