@@ -52,11 +52,12 @@ def main():
     number = first_number
 
     nospace_date = dt.date(1943, 10, 18)
+    second_date = dt.date(1950, 1, 2)
 
     done = False
     while not done:
         date_str = date.strftime('%Y-%m-%d')
-        if date < nospace_date:
+        if date < nospace_date or date >= second_date:
             url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s} n{:s}_text.pdf'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
         else:
             url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s}n{:s}_text.pdf'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
