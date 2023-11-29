@@ -51,6 +51,15 @@ def main():
     volume = first_volume
     number = first_number
 
+    # start dates:
+    # 1936-11-23 v01 n01
+    # ... missing several ...
+    # 1955-12-26 v40 n01
+    # 1956-01-09 v40 n02
+    # 1957-01-07 v42 n01
+    # 1958-01-06 v44 n01
+    # 1959-01-05 v46 n01
+
     nospace_date = dt.date(1943, 10, 18)
     second_date = dt.date(1950, 1, 2)
 
