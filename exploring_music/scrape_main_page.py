@@ -19,6 +19,9 @@ def main():
     save_dir = options.save_dir
     download_mp3s = options.download_mp3s
 
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
     url = 'https://www.wfmt.com/programs/exploring-music/'
     raw = get(url)
 
@@ -62,7 +65,7 @@ def main():
             outfile = os.path.join(save_dir, basename)
             print(basename)
             if not os.path.exists(outfile):
-                download(link, outfile, binary=False, stream=True, retry=True, total=None, ignore_content_type=True)
+                download(link, outfile, binary=True, stream=True, retry=True, total=None, ignore_content_type=True)
             else:
                 print("Already downloaded", outfile)
 
