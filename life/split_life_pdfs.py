@@ -16,7 +16,7 @@ def main():
 
     pdfs = sorted(glob(os.path.join(basedir, '*.pdf')))
 
-    for infile in pdfs[:1]:
+    for infile in pdfs:
         basename = os.path.basename(infile)[:-4]
         # make an output directory for this issue
         outdir = os.path.join(basedir, basename)

@@ -48,7 +48,7 @@ def get_with_status(url, html_only=True, retry=False, retry_sleep=10):
         return None
 
 
-def download(url, outfile, binary=True, stream=True, retry=True, total=None):
+def download(url, outfile, binary=True, stream=True, retry=True, total=None, ignore_content_type=False):
     if binary:
         mode = 'wb'
     else:
@@ -57,7 +57,7 @@ def download(url, outfile, binary=True, stream=True, retry=True, total=None):
     try:
         print("Requesting", url)
         with closing(requests.get(url, stream=stream)) as response:
-            if is_good_response(response, html_only=False):
+            if is_good_response(response, html_only=False, ignore_content_type=ignore_content_type):
                 with open(outfile, mode) as handle:
                     print("Opening", outfile)
                     for data in tqdm(response.iter_content(), total=total):
@@ -75,12 +75,15 @@ def download(url, outfile, binary=True, stream=True, retry=True, total=None):
         return None
 
 
-def is_good_response(response, html_only=False):
+def is_good_response(response, html_only=False, ignore_content_type=False):
     """
     Returns True if the response seems to be HTML, False otherwise.
     """
-    content_type = response.headers['Content-Type'].lower()
-    if response.status_code == 200 and content_type is not None:
+    if ignore_content_type:
+        content_type = None
+    else:
+        content_type = response.headers['Content-Type'].lower()
+    if response.status_code == 200 and (content_type is not None or ignore_content_type):
         if not html_only or content_type.find('html') > -1:
             return True
 
