@@ -22,6 +22,8 @@ def main():
                       help='First number: default=%default')
     parser.add_option('--pause', type=int, default=5,
                       help='Pause between issues: default=%default')
+    parser.add_option('--with-text', action="store_true", default=False,
+                      help='Get the PDFs with text (may be lower quality): default=%default')    
     #parser.add_option('--overwrite', action="store_true", default=False,
     #                  help='Overwrite files: default=%default')
     #parser.add_option('--clear-log', action="store_true", default=False,
@@ -34,6 +36,7 @@ def main():
     first_volume = options.first_volume
     first_number = options.first_number
     pause = options.pause
+    with_text = options.with_text
 
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
@@ -67,11 +70,17 @@ def main():
     while not done:
         date_str = date.strftime('%Y-%m-%d')
         if date < nospace_date or date >= second_date:
-            url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s} n{:s}_text.pdf'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
+            url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s} n{:s}'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
         else:
-            url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s}n{:s}_text.pdf'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
+            url = 'https://archive.org/download/Life-{:s}-Vol-{:d}-No-{:d}/Life - {:s} - v{:s}n{:s}'.format(date_str, volume, number, date_str, str(volume).zfill(2), str(number).zfill(2))
 
-        outfile = os.path.join(data_dir, '-'.join([date_str, str(volume), str(number)]) + '.pdf')
+        if with_text:
+            url += '_text.pdf'
+            outfile = os.path.join(data_dir, '-'.join([date_str, str(volume), str(number)]) + '_text.pdf')
+        else:
+            url += '.pdf'
+            outfile = os.path.join(data_dir, '-'.join([date_str, str(volume), str(number)]) + '.pdf')       
+        
         success = download_file(url, outfile, max_tries=3, overwrite=True)
 
         if not success:
