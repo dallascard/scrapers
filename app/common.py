@@ -27,7 +27,7 @@ def scrape_documents(initial_target, outdir, overwrite_index_pages=False, overwr
             url = domain + initial_target + '?page=' + str(page)
             index_file = os.path.join(outdir, 'index?page' + str(page) + '.html')
 
-        if os.path.exists(index_file) and not overwrite_index_pages:
+        if os.path.exists(index_file) and not overwrite_index_pages and not overwrite_all:
             print("Loading index page")
             with open(index_file, 'rb') as f:
                 raw_html = f.read()
