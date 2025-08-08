@@ -24,7 +24,7 @@ def main():
     sleep = options.sleep
 
     domain = 'https://www.presidency.ucsb.edu'
-    initial_target = '/documents/app-categories/spoken-addresses-and-remarks/presidential/farewell-address'
+    initial_target = '/documents/app-categories/spoken-addresses-and-remarks/presidential/farewell-addresses'
 
     scrape_documents(initial_target, outdir, overwrite_index_pages=overwrite, overwrite_all=overwrite_all, sleep=sleep, domain=domain)
 
