@@ -34,7 +34,7 @@ def main():
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    url = 'https://www.aclweb.org/anthology/events/' + conf + '-' + year + '/index.html'
+    url = 'https://aclanthology.org/events/' + conf + '-' + year + '/index.html'
     outfile = os.path.join(conf_dir, 'index.html')
 
     if os.path.exists(outfile) and overwrite:
@@ -60,8 +60,8 @@ def main():
         parts = url.split('/')
         name = parts[-1]
         parts = name.split('.')
-        if len(parts) == 2:
-            if len(parts[0]) == 8 and parts[1] == 'pdf':
+        if len(parts) == 4:
+            if len(parts[0]) == 4 and parts[-1] == 'pdf':
                 pdf_urls.add(url)
 
     pdf_urls = list(pdf_urls)

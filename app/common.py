@@ -117,8 +117,16 @@ def process_speech(url, raw_dir, verbose=False, sleep=2, overwrite=False):
         for p in ps:
             paragraphs.append(p.text)
 
-    assert title is not None
-    assert date is not None
+    try:
+        assert title is not None
+        assert date is not None
+        
+    except AssertionError as e:
+        print(link_id)
+        print(title)
+        print(date)
+        print(paragraphs)
+        raise e
     output = {'title': title,
               'date': date,
               'text': paragraphs}
